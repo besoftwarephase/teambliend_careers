@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bliend - Login</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+background:#1A1A1A;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+min-height:100vh;
+min-width:960px;
+}
+
+.dark-mode {
+    background-color: #fff;
+    color: #1A1A1A;
+} 
+/* HERO TEXT */
+
+.hero{
+text-align:center;
+margin-bottom:40px;
+}
+
+.hero h1{
+font-size:35px;
+font-weight:700;
+color:whitesmoke;
+letter-spacing:2px;
+}
+
+.hero p{
+margin-top:10px;
+color:#6b7280;
+font-size:12px;
+}
+
+.hero p:hover{
+color: #ffffff87;
+font-weight: 400;
+transition:all .25s ease;
+}
+
+/* CONTAINER */
+
+.container{
+background:#333232;
+padding:5px;
+border-radius:30px;
+box-shadow:0 15px 35px rgba(0,0,0,0.35);
+}
+
+/* LOGIN CARD */
+
+.card{
+width:900px;
+max-width:530px;
+padding: 20px 40px 20px;
+border-radius:25px;
+text-align:center;
+color:white;
+position:relative;
+
+background:linear-gradient(76deg,#252425 0%,#636363 100%);
+
+box-shadow:
+0 8px 30px rgba(0,0,0,0.4),
+inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+/* CARD TEXT */
+
+.card h2{
+font-size: 32px;
+font-weight: 400;
+margin-bottom: 10px;
+color: #ffffffd4;
+}
+
+.card p{
+opacity:.9;
+margin-bottom:16px;
+font-size:12px;
+color:#d6d9de8c;
+line-height:17px;
+font-weight:200;
+}
+
+/* INPUT */
+
+.input-box{
+position:relative;
+width:350px;
+max-width:90%;
+margin:auto;
+}
+
+.input-box input{
+width:100%;
+padding:14px 60px 14px 25px;
+border-radius:40px;
+border:2px solid transparent;
+outline:none;
+font-size:12px;
+background:rgba(255,255,255,0.25);
+color:white;
+backdrop-filter:blur(10px);
+transition:all .25s ease;
+font-weight: 200;
+}
+
+.input-box input::placeholder{
+color:#ffffff9e;
+}
+
+/* INPUT FOCUS */
+
+#email:focus{
+border:2px solid #2563eb;
+box-shadow:
+0 0 0 2px rgba(50,118,180,0.2),
+0 6px 16px rgba(0,0,0,0.25);
+background: #FFFFFF;
+color : #333232;
+font-weight: 500;
+transition: all .25s ease;
+}
+
+/* ARROW BUTTON */
+
+.arrow{
+position: absolute;
+right: 5px;
+top: 32%;
+transform:translateY(-50%);
+width:34px;
+height:34px;
+border-radius:50%;
+border:none;
+background:#2563eb;
+cursor:pointer;
+padding:6px;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:all .25s ease;
+}
+
+.arrow:hover{
+transform:translateY(-50%) scale(1.08);
+box-shadow:0 6px 14px rgba(0,0,0,0.35);
+}
+
+/* ERROR MESSAGE */
+
+#errorMsg{
+color: #e45153;
+font-size: 11px;
+margin-top: 6px;
+min-height: 18px;
+font-weight: 400;
+text-align: center;
+}
+
+/* AVATARS */
+
+.avatars{
+position: absolute;
+bottom: -33px;
+left: 50%;
+transform: translateX(-50%);
+display: flex;
+gap: 15px;
+}
+
+.avatars img{
+width:50px;
+height:50px;
+border-radius:50%;
+border:6px solid #e5e7eb;
+object-fit:cover;
+background:white;
+box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.avatars img:hover
+{
+
+border:2px solid #3276b4;
+box-shadow:
+0 0 0 2px rgba(50,118,180,0.2),
+0 6px 16px rgba(0,0,0,0.25);
+transition:all .25s ease;
+}
+
+/* FOOTER */
+
+.footer{
+margin-top: 80px;
+text-align: center;
+font-size: 9px;
+color: #ffffff94;
+font-weight: 100;
+}
+
+.footer strong{
+color:#e5e7ebb8
+}
+
+.footer:hover
+{
+  text-decoration: underline;
+  text-decoration-line: underline;
+  text-decoration-color: #4383ba;
+  transition: all 0.3s ease;
+  text-underline-offset: 4px;
+}
+h1:hover {
+  color: #4383ba;
+  transition:all .25s ease;
+}
+
+</style>
+</head>
+<body class="gradient-background" style="background:#1A1A1A;">
+<div class="main_content">
+<!-- HERO -->
+<div class="hero">
+<h1>WELCOME BACK</h1>
+
+<span style="width:100px;height:5px;border-radius:20px;display:inline-block;background:linear-gradient(76deg, rgba(37,36,37,1) 0%, rgba(50,118,180,1) 100%);"></span>
+
+<p>Empowering Talent. Creating Success. Inspiring Innovation Every Day.</p>
+</div>
+
+
+<!-- LOGIN CARD -->
+<div class="container">
+
+<div class="card">
+
+<h2>Already working together?</h2>
+<p>Log in to your account and connect with your teammates!</p>
+
+<div class="input-box">
+
+<input 
+type="email"
+id="email"
+placeholder="youremail@address.com"
+required
+autocomplete="off"
+/>
+
+<p id="errorMsg"></p>
+
+<button class="arrow" id="submit">
+<img src="public/images/down-arrow.png"
+alt="Button Image"
+style="width:16px;height:16px;transform:rotate(180deg);">
+</button>
+
+</div>
+
+
+<div class="avatars">
+<img src="public/images/image_1.jpg" style="border: 3px solid #9e65e4;">
+<img src="public/images/image_3.jpg" style="border: 3px solid #99bb03;">
+<img src="public/images/center_image.jpg" style="border: 3px solid #ea7332;width: 60px;height: 60px;">
+<img src="public/images/image_4.jpg" style="border: 3px solid #f0ca63;">
+<img src="public/images/image_5.jpg" style="border: 3px solid #3dc5b0;">
+</div>
+
+</div>
+</div>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+© 2026 Powered by <strong>Bliend</strong>. All Rights Reserved
+</footer>
+<!-- <button id="theme-toggle">Toggle Theme</button> -->
+
+</div>
+
+</body>
+
+<script>
+
+// function myFunction() {
+//    var element = document.body;
+//    element.classList.toggle("dark-mode");
+// }
+
+
+const emailInput = document.getElementById("email");
+const submitBtn = document.getElementById("submit");
+const errorMsg = document.getElementById("errorMsg");
+
+// Email regex
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+// ----------------------
+// SUBMIT VALIDATION
+// ----------------------
+submitBtn.addEventListener("click", function(e){
+
+    e.preventDefault();
+
+    const email = emailInput.value.trim();
+
+    if(email === ""){
+        errorMsg.textContent = "Email field cannot be empty";
+        emailInput.style.border = "2px solid #e45153";
+        emailInput.focus();
+        return;
+    }
+
+    if(!emailRegex.test(email)){
+        errorMsg.textContent = "Please enter a valid email address";
+        emailInput.style.border = "2px solid #e45153";
+        emailInput.focus();
+        return;
+    }
+
+    // store email
+    localStorage.setItem("userEmail", email);
+
+    errorMsg.style.color = "green";
+    errorMsg.textContent = "Email stored successfully!";
+    emailInput.style.border = "2px solid green";
+    window.location.href = "public/career.html";
+
+    // setTimeout(function(){
+    //     location.reload();
+    // },5000);
+
+});
+
+
+// ----------------------
+// REMOVE ERROR WHILE TYPING
+// ----------------------
+emailInput.addEventListener("input", function(){
+
+    const value = emailInput.value.trim();
+
+    if(value !== ""){
+        errorMsg.textContent = "";
+        emailInput.style.border = "2px solid #3276b4";
+    }
+
+});
+
+
+// ----------------------
+// VALIDATE ON BLUR
+// ----------------------
+emailInput.addEventListener("blur", function(){
+
+    const email = emailInput.value.trim();
+
+    if(email === ""){
+        errorMsg.textContent = "";
+        emailInput.style.border = "unset";
+        return;
+    }
+
+    if(!emailRegex.test(email)){
+        errorMsg.textContent = "Please enter a valid email address";
+        emailInput.style.border = "unset";
+    }else{
+        errorMsg.textContent = "";
+        emailInput.style.border = "unset";
+    }
+
+});
+</script>
+</html>
