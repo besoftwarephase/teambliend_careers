@@ -283,11 +283,96 @@ function validateStep2() {
 }
 
 /*======== VALIDATE STEP 3 ============*/
-function validateStep3()
-{
-     let isValid = true;
+// function validateStep3()
+// {
+//      let isValid = true;
 
-    const fields = [q_5, q_6, q_7, q_8, q_9];
+//     const fields = [q_5, q_6, q_7, q_8, q_9];
+
+//     fields.forEach(fields => {
+
+//         if (fields.value.trim() === "") {
+//             fields.style.setProperty('border-color', '#ff4d4f', 'important');
+//             isValid = false;
+
+//         } else {
+
+//             fields.style.borderColor = "unset";
+
+//         }
+
+//     });
+//     if (isValid) {
+    
+//     document.querySelectorAll(".step_circles")[2].classList.add("completed");
+//     document.querySelectorAll(".step_circles")[2].classList.add("active");
+//     document.querySelectorAll(".menu_list")[2].classList.remove("disabled");
+//     showLoader();
+
+//     const fd = new FormData();
+
+//     fd.append("name", fullName.value);
+//     fd.append("email", email.value);
+//     fd.append("phone", phone.value);
+//     fd.append("dob", dob.value);
+//     fd.append("location", currentLocation.value);
+//     fd.append("describe", describe.value);
+
+//     fd.append("q_1", q_1.value);
+//     fd.append("q_2", q_2.value);
+//     fd.append("q_3", q_3.value);
+//     fd.append("q_4", q_4.value);
+
+//     fd.append("preferred_role", q_5.value);
+//     fd.append("expected_salary", q_6.value);
+//     fd.append("joining_date", q_7.value);
+
+//     if (q_8.files.length === 0) {
+//     q_8.style.setProperty('border-color', '#ff4d4f', 'important');
+//     isValid = false;
+//     } else {
+//     fd.append("resume", q_8.files[0]); // ✅ add file to formData
+//     }
+
+
+//     fd.append("message", q_9.value);
+
+//     fetch("http://localhost:3000/submit", {
+//     method: "POST",
+//     body: fd
+// })
+// .then(res => {
+//     if (!res.ok) {
+//         throw new Error("Server error");
+//     }
+//     return res.json();
+// })
+// .then(data => {
+
+//     hideLoader();
+
+//     if (data.status === "SUCCESS") {
+//         alert("Application submitted successfully!");
+//         setTimeout(() => window.location.reload(), 1000);
+//     } else {
+//         alert("Submission failed");
+//     }
+
+// })
+// .catch(err => {
+
+//     hideLoader();
+//     console.error(err);
+//     alert("Server error. Please try again.");
+
+// });
+// }
+// }
+
+function validateStep3() {
+    let isValid = true;
+
+    const fields = [q_5, q_6, q_7, q_9];
 
     fields.forEach(fields => {
 
@@ -302,14 +387,38 @@ function validateStep3()
         }
 
     });
-    if (isValid) {
-    
+    /* FILE VALIDATION */
+    const file = q_8.files[0];
+
+    if (!file) {
+        alert("Please upload resume");
+        isValid = false;
+    } else {
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+
+        if (!allowedTypes.includes(file.type)) {
+            alert("Only PDF/DOC/DOCX allowed");
+            return;
+        }
+
+        if (file.size > 5 * 1024 * 1024) {
+            alert("Max size 5MB");
+            return;
+        }
+    }
+
+    if (!isValid) return;
     document.querySelectorAll(".step_circles")[2].classList.add("completed");
     document.querySelectorAll(".step_circles")[2].classList.add("active");
     document.querySelectorAll(".menu_list")[2].classList.remove("disabled");
+
     showLoader();
 
-    const fd = new FormData();
+     const fd = new FormData();
 
     fd.append("name", fullName.value);
     fd.append("email", email.value);
@@ -327,46 +436,42 @@ function validateStep3()
     fd.append("expected_salary", q_6.value);
     fd.append("joining_date", q_7.value);
 
-    if (q_8.files.length === 0) {
-    q_8.style.setProperty('border-color', '#ff4d4f', 'important');
-    isValid = false;
-    } else {
-    fd.append("resume", q_8.files[0]); // ✅ add file to formData
-    }
-
-
+    fd.append("resume", file);
     fd.append("message", q_9.value);
 
-    fetch("http://localhost:3000/submit", {
+    /* ✅ FIXED API URL */
+   fetch("http://localhost:3000/submit", {
     method: "POST",
     body: fd
 })
-.then(res => {
-    if (!res.ok) {
-        throw new Error("Server error");
+.then(async res => {
+
+    let data;
+
+    try {
+        data = await res.json();  // ✅ directly parse JSON
+    } catch (err) {
+        throw new Error("Server not returning JSON");
     }
-    return res.json();
+
+    if (!res.ok) {
+        throw new Error(data.error || "Server error");
+    }
+
+    return data;
 })
 .then(data => {
-
     hideLoader();
 
-    if (data.status === "SUCCESS") {
-        alert("Application submitted successfully!");
-        setTimeout(() => window.location.reload(), 1000);
-    } else {
-        alert("Submission failed");
-    }
-
+    alert("🎉 Application submitted successfully!");
+    window.location.reload();
 })
 .catch(err => {
-
     hideLoader();
-    console.error(err);
-    alert("Server error. Please try again.");
-
+    console.error("ERROR:", err);
+    alert(err.message);
 });
-}
+
 }
 
 
@@ -465,3 +570,5 @@ function getFullNumber() {
     const fullNumber = countryCode.value + phoneNumber.value;
     console.log(fullNumber);
 }
+
+

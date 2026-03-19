@@ -1,129 +1,217 @@
 require("dotenv").config();
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const multer = require("multer");
 const nodemailer = require("nodemailer");
-const fs = require("fs");
+const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
+/* ================= ENV DEBUG ================= */
+console.log("EMAIL_USER:", process.env.EMAIL_USER);
+console.log("CLOUDINARY_NAME:", process.env.CLOUDINARY_CLOUD_NAME);
+
+/* ================= CLOUDINARY CONFIG ================= */
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
+console.log("✅ Cloudinary Config Loaded");
+
+/* ================= MIDDLEWARE ================= */
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// Serve frontend
 app.use(express.static(path.join(__dirname, "public")));
 
-// File upload setup
-const upload = multer({ dest: "uploads/" });
+/* ================= ALLOWED FILE TYPES ================= */
+const ALLOWED_MIMETYPES = [
+  "application/pdf",                                                         // .pdf
+  "application/msword",                                                      // .doc
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document", // .docx
+];
 
-// Email transporter
+const MIMETYPE_TO_EXT = {
+  "application/pdf": "pdf",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+};
+
+/* ================= MULTER (memory storage) ================= */
+// Files are held in memory so we can:
+//  1. Upload to Cloudinary via upload_stream (no temp files)
+//  2. Attach the same buffer directly to the email
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5 MB
+  fileFilter: (req, file, cb) => {
+    if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PDF, DOC, or DOCX files are allowed"), false);
+    }
+  },
+});
+
+/* ================= EMAIL SETUP ================= */
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
+    pass: process.env.EMAIL_PASS, // ⚠️ MUST be App Password
   },
-  tls: {
-    rejectUnauthorized: false
-  }
 });
 
-app.get("/submit", (req,res)=>{
-    res.send("Submit endpoint works only with POST");
+/* ================= TEST ROUTE ================= */
+app.get("/", (req, res) => {
+  res.send("Server is running");
 });
 
-
-// Submit route
+/* ================= SUBMIT API ================= */
 app.post("/submit", upload.single("resume"), async (req, res) => {
   try {
-    const d = req.body;
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file?.originalname, req.file?.mimetype);
 
-    // =========================
-    // 1️⃣ Send Email to Admin
-    // =========================
-    await transporter.sendMail({
-      from: `"Bliend Career Form" <${process.env.EMAIL_USER}>`,
-      to: "ashaganga28@gmail.com",
-      cc: [
-        "nawin@hellobliend.com",
-        "ashabliend@gmail.com",
-        "nawinmoffl@gmail.com"
-      ],
-      replyTo: d.email,
-      subject: `New Candidate Application – ${d.name} | ${d.preferred_role}`,
-      html: `
-        <h2>New Candidate Application</h2>
-        <hr/>
-        <p><b>Name:</b> ${d.name}</p>
-        <p><b>Email:</b> ${d.email}</p>
-        <p><b>Phone:</b> ${d.phone}</p>
-        <p><b>Location:</b> ${d.location}</p>
-        <p><b>Describe:</b> ${d.describe}</p>
-        <p><b>1.when your creative idea faces rejection whats your next move :</b> ${d.q_1}</p>
-        <p><b>Describe the most unconventional idea you ever had and what made it different :</b> ${d.q_2}</p>
-        <p><b>3.In marketing campaign, what matters most to you, emotion, logic, ot attention ? Why  :</b> ${d.q_3}</p>
-        <p><b>4.you have limited resources and time to launch a brand campaign. how would you still make it unforgettable?</b> ${d.q_4}</p>
-        <hr/>
-        <p><b>Preferred Role:</b> ${d.preferred_role}</p>
-        <p><b>Expected Salary:</b> ${d.expected_salary}</p>
-        <p><b>Joining Date:</b> ${d.joining_date}</p>
-        <p><b>Message:</b> ${d.message}</p>
-      `,
-      attachments: req.file
-        ? [
-            {
-              filename: req.file.originalname,
-              path: req.file.path
-            }
-          ]
-        : []
+    /* ================= VALIDATION ================= */
+    if (!req.file) {
+      return res.status(400).json({
+        status: "FAILED",
+        error: "Resume file is required (PDF, DOC, or DOCX)",
+      });
+    }
+
+    const d = req.body;
+    const ext = MIMETYPE_TO_EXT[req.file.mimetype];
+    const isPdf = ext === "pdf";
+
+    /* ================= UPLOAD TO CLOUDINARY ================= */
+    const resumeURL = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          folder: "career/resumes",
+          resource_type: "raw",              // supports pdf, doc, docx
+          format: ext,
+          public_id: `resume_${Date.now()}`,
+          flags: isPdf ? "attachment:false" : "attachment", // PDF = viewable, DOC/DOCX = download
+        },
+        (error, result) => {
+          if (error) return reject(error);
+          resolve(result.secure_url);
+        }
+      );
+      stream.end(req.file.buffer);
     });
 
-    // =========================
-    // 2️⃣ Auto Reply to Candidate
-    // =========================
+    console.log("✅ Resume uploaded:", resumeURL);
+
+    /* ================= VERIFY EMAIL ================= */
+    await transporter.verify();
+    console.log("Email server ready");
+
+    /* ================= EMAIL CONTENT ================= */
+    const adminHTML = `
+      <h2><strong>New Candidate Application Form<strong></h2>
+      <hr/>
+      
+      <h4>Personal Information</h4>
+      <p><b>Name:</b> ${d.name}</p>
+      <p><b>Email:</b> ${d.email}</p>
+      <p><b>Phone:</b> ${d.phone}</p>
+      <p><b>Location:</b> ${d.location}</p>
+      <p><b>Description:</b> ${d.describe}</p>
+
+      <h4>Creative Assessment</h4>
+      <p><b>Q1:</b> ${d.q_1}</p>
+      <p><b>Q2:</b> ${d.q_2}</p>
+      <p><b>Q3:</b> ${d.q_3}</p>
+      <p><b>Q4:</b> ${d.q_4}</p>
+       
+      <h4>Open Position and Final details </h4>
+      <p><b>Preferred Role:</b> ${d.preferred_role}</p>
+      <p><b>Expected Salary:</b> ${d.expected_salary}</p>
+      <p><b>Joining Date:</b> ${d.joining_date}</p>
+      <p><b>Message:</b> ${d.message}</p>
+
+      <p><b>Resume (${ext.toUpperCase()}):</b>
+        <a href="${resumeURL}" target="_blank">
+          ${isPdf ? "View Resume" : "Download Resume"}
+        </a>
+      </p>
+      <p><i>The resume is also attached to this email.</i></p>
+    `;
+
+    const userHTML = `
+      <div style="font-family:Arial,sans-serif;">
+        <h2>Hi ${d.name},</h2>
+
+        <p>We’ve received your application for the  <b>${d.preferred_role}</b> role.</p>
+
+        <p> will review it shortly,If your profile aligns with our requirements our team will reach out to you shortly.</p>
+
+        <p>We appreciate the time you took to apply.</p>
+
+        <br/>
+        <p><b>Best Regards</b></p>
+        <p>Bliend Team</p>
+        <p>Marketing & Creative Agency</p>
+      </div>
+    `;
+
+    /* ================= SEND EMAILS ================= */
+
+    // 👉 Admin Email — resume attached directly from memory buffer
+    await transporter.sendMail({
+      from: `"Bliend Career Form" <${process.env.EMAIL_USER}>`,
+      to: "ashabliend@gmail.com",
+      cc: [
+        "ashabliend@gmail.com",
+        "nawinmoffl@gmail.com",
+      ],
+      replyTo: d.email,
+      subject: `New Candidate – ${d.name} | ${d.preferred_role}`,
+      html: adminHTML,
+      attachments: [
+        {
+          filename: `${d.name.replace(/\s+/g, "_")}_Resume.${ext}`,
+          content: req.file.buffer,
+          contentType: req.file.mimetype,
+        },
+      ],
+    });
+
+    // 👉 Auto Reply to Candidate
     await transporter.sendMail({
       from: `"Bliend Careers" <${process.env.EMAIL_USER}>`,
       to: d.email,
-      subject: `Application Received – ${d.preferred_role} | Bliend`,
-      html: `
-        <div style="font-family:inter,sans-serif;line-height:1.6;">
-          <h2>Hi ${d.name},</h2>
-
-          <p>Thank you for applying for the 
-          <b>${d.preferred_role}</b> position at <b>Bliend</b>.</p>
-
-          <p>We have successfully received your application.</p>
-
-          <p>Our hiring team is reviewing your profile and 
-          will contact you if shortlisted.</p>
-
-          <br/>
-
-          <p>Best Regards,</p>
-          <p><b>Bliend Team</b><br/>
-          Advertising & Marketing</p>
-
-          <hr/>
-          <small>This is an automated email. Please do not reply.</small>
-        </div>
-      `
+      subject: `Application Received – ${d.preferred_role}`,
+      html: userHTML,
     });
 
-  
-
-    console.log("Emails sent successfully");
-    res.json({ status: "SUCCESS" });
-
+    /* ================= RESPONSE ================= */
+    return res.status(200).json({
+      status: "SUCCESS",
+      message: "Application submitted successfully",
+      resume_url: resumeURL,
+    });
   } catch (err) {
-    console.error("Mail error:", err);
-    res.status(500).json({ status: "FAILED", error: err.message });
+    console.error("❌ ERROR:", err);
+
+    return res.status(500).json({
+      status: "FAILED",
+      error: err.message || "Internal Server Error",
+    });
   }
 });
 
+/* ================= SERVER ================= */
 const PORT = process.env.PORT || 3000;
+
 app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });
