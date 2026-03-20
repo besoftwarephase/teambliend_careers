@@ -440,7 +440,7 @@ function validateStep3() {
     fd.append("message", q_9.value);
 
     /* ✅ FIXED API URL */
-   fetch("http://localhost:3000/submit", {
+   fetch("/submit", {
     method: "POST",
     body: fd
 })
@@ -526,9 +526,9 @@ $(function () {
 $("#dob").datepicker({
     dateFormat: "mm/dd/yy",
     duration: "fast",
-    minDate: new Date(2000, 0, 1),
+    minDate: new Date(1995, 0, 1),
     maxDate: 0,
-    defaultDate: new Date(2000, 0, 1)
+    defaultDate: new Date(1995, 0, 1)
 });
 
 $("#joining_date").datepicker({

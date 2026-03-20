@@ -1,6 +1,5 @@
-require("dotenv").config();
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -10,9 +9,6 @@ const cloudinary = require("cloudinary").v2;
 
 const app = express();
 
-/* ================= ENV DEBUG ================= */
-console.log("EMAIL_USER:", process.env.EMAIL_USER);
-console.log("CLOUDINARY_NAME:", process.env.CLOUDINARY_CLOUD_NAME);
 
 /* ================= CLOUDINARY CONFIG ================= */
 cloudinary.config({
@@ -60,11 +56,16 @@ const upload = multer({
 
 /* ================= EMAIL SETUP ================= */
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,
+  secure: false,
   auth: {
     user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS, // ⚠️ MUST be App Password
+    pass: process.env.EMAIL_PASS,
   },
+  tls: {
+    rejectUnauthorized: false,
+  }
 });
 
 /* ================= TEST ROUTE ================= */
@@ -150,7 +151,7 @@ app.post("/submit", upload.single("resume"), async (req, res) => {
       <div style="font-family:Arial,sans-serif;">
         <h2>Hi ${d.name},</h2>
 
-        <p>We’ve received your application for the  <b>${d.preferred_role}</b> role.</p>
+        <p>We’ve received your application for the  <b> ${d.preferred_role} </b> role.</p>
 
         <p> will review it shortly,If your profile aligns with our requirements our team will reach out to you shortly.</p>
 
@@ -213,5 +214,6 @@ app.post("/submit", upload.single("resume"), async (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
+

@@ -77,11 +77,7 @@ img{
     margin:0;
     padding:0;
 }
-body{
-    background:var(--bg-color);
-    color:var(--text-color);
-    transition:0.3s;
-}
+
 
 .subtitle{
     color: #1a1a1a;
@@ -96,7 +92,9 @@ body{
     align-items: center;
     min-height: 100vh;
     scrollbar-width: none;
-    
+    font-family: 'inter';
+    min-width: 960px;
+    overflow-x: scroll;
 }
 .page_wrapper{
     width:75%;
@@ -105,7 +103,9 @@ body{
     border-radius:12px;
 }
 .page_content{
-    overflow:hidden;
+    overflow: hidden;
+    min-width: 690px;
+    max-width: 1200px;
 }
 .form-layout{
 display:grid;
