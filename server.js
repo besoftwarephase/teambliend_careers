@@ -18,7 +18,6 @@ cloudinary.config({
 console.log("Cloudinary Config Loaded");
 
 /* ================= RESEND EMAIL SETUP ================= */
-// Resend works perfectly on Render free tier — no SMTP port blocking issues
 const resend = new Resend(process.env.RESEND_API_KEY);
 console.log(`RESEND_API_KEY : ${process.env.RESEND_API_KEY ? "set" : "NOT SET — emails will fail"}`);
 
@@ -93,55 +92,180 @@ function uploadToCloudinary(buffer, ext) {
 
 /* ================= EMAIL HELPER ================= */
 async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
+
+  /* ── CC LIST: Add / remove emails as needed ── */
+  const CC_LIST = [
+    "ashabliend@gmail.com",   // ✅ Add / remove CC emails here
+  ];
+
+  /* ── ADMIN EMAIL HTML ── */
   const adminHTML = `
-    <h2 style="color:#333">New Job Application</h2>
-    <table style="font-family:sans-serif;font-size:14px;border-collapse:collapse">
-      <tr><td style="padding:6px 12px;font-weight:bold">Name</td><td style="padding:6px 12px">${data.name}</td></tr>
-      <tr><td style="padding:6px 12px;font-weight:bold">Email</td><td style="padding:6px 12px">${data.email}</td></tr>
-      <tr><td style="padding:6px 12px;font-weight:bold">Phone</td><td style="padding:6px 12px">${data.phone}</td></tr>
-      <tr><td style="padding:6px 12px;font-weight:bold">Role</td><td style="padding:6px 12px">${data.preferred_role}</td></tr>
-    </table>
-    <p style="margin-top:16px">
-      <a href="${resumeURL}" style="background:#4F46E5;color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none">
-        View Resume
-      </a>
-    </p>
+    <div style="font-family:sans-serif;max-width:640px;margin:auto;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+
+      <!-- HEADER -->
+      <div style="background:#4F46E5;padding:24px 32px">
+        <h2 style="color:#fff;margin:0;font-size:20px">Candidate Job Application </h2>
+        <p style="color:#c7d2fe;margin:6px 0 0;font-size:13px">
+          Received on ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
+        </p>
+      </div>
+
+      <div style="padding:24px 32px;background:#fff">
+
+        <!-- SECTION 1: Personal Information -->
+        <h3 style="margin:0 0 12px;font-size:14px;color:#4F46E5;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e5e7eb;padding-bottom:6px">
+          Personal Information
+        </h3>
+        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">Full Name</td>
+            <td style="padding:10px 14px;color:#111827">${data.name}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Email</td>
+            <td style="padding:10px 14px;color:#111827">${data.email}</td>
+          </tr>
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Phone</td>
+            <td style="padding:10px 14px;color:#111827">${data.phone}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Date of Birth</td>
+            <td style="padding:10px 14px;color:#111827">${data.dob}</td>
+          </tr>
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Location</td>
+            <td style="padding:10px 14px;color:#111827">${data.location}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">About Candidate</td>
+            <td style="padding:10px 14px;color:#111827">${data.describe}</td>
+          </tr>
+        </table>
+
+        <!-- SECTION 2: Creative & Logical Thinking -->
+        <h3 style="margin:0 0 12px;font-size:14px;color:#4F46E5;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e5e7eb;padding-bottom:6px">
+          Creative & Logical Thinking
+        </h3>
+        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">
+              1. When your creative idea faces rejection, what's your next move?
+            </td>
+            <td style="padding:10px 14px;color:#111827">${data.q_1}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">
+              2. Describe the most unconventional idea you ever had and what made it different?
+            </td>
+            <td style="padding:10px 14px;color:#111827">${data.q_2}</td>
+          </tr>
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151">
+              3. In a marketing campaign, what matters most — emotion, logic, or attention? Why?
+            </td>
+            <td style="padding:10px 14px;color:#111827">${data.q_3}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">
+              4. You have limited resources and time to launch a brand campaign. How would you still make it unforgettable?
+            </td>
+            <td style="padding:10px 14px;color:#111827">${data.q_4}</td>
+          </tr>
+        </table>
+
+        <!-- SECTION 3: Open Position & Final Details -->
+        <h3 style="margin:0 0 12px;font-size:14px;color:#4F46E5;text-transform:uppercase;letter-spacing:0.05em;border-bottom:2px solid #e5e7eb;padding-bottom:6px">
+          Open Position & Final Details
+        </h3>
+        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">Preferred Role</td>
+            <td style="padding:10px 14px;color:#111827">${data.preferred_role}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Expected Salary</td>
+            <td style="padding:10px 14px;color:#111827">${data.expected_salary}</td>
+          </tr>
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Joining Date</td>
+            <td style="padding:10px 14px;color:#111827">${data.joining_date}</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 14px;font-weight:300;color:#374151">Additional Info</td>
+            <td style="padding:10px 14px;color:#111827">${data.message || "—"}</td>
+          </tr>
+        </table>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div style="background:#f3f4f6;padding:14px 32px;font-size:12px;color:#9ca3af;text-align:center">
+        This is an automated email from Bliend Careers System
+      </div>
+
+    </div>
   `;
 
+  /* ── CANDIDATE AUTO-REPLY HTML ── */
   const userHTML = `
-    <h2 style="color:#333">Application Received!</h2>
-    <p style="font-family:sans-serif;font-size:14px">Hi <strong>${data.name}</strong>,</p>
-    <p style="font-family:sans-serif;font-size:14px">
-      Thank you for applying for the <strong>${data.preferred_role}</strong> position at Bliend.
-      We have received your application and will review it shortly.
-    </p>
-    <p style="font-family:sans-serif;font-size:14px">We will be in touch soon!</p>
-    <p style="font-family:sans-serif;font-size:14px;color:#888">— The Bliend Team</p>
+    <div style="font-family:sans-serif;max-width:600px;margin:auto;border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
+
+      <!-- HEADER -->
+      <div style="background:#4F46E5;padding:24px 32px">
+        <h2 style="color:#fff;margin:0;font-size:20px"> Application Received!</h2>
+      </div>
+
+      <!-- BODY -->
+      <div style="padding:24px 32px;background:#fff">
+        <p style="font-size:15px;color:#111827;margin-top:0">Hi <strong>${data.name}</strong>,</p>
+        <p style="font-size:14px;color:#374151;line-height:1.8">
+          Thank you for applying for the <strong>${data.preferred_role}</strong> position at <strong>Bliend</strong>.
+          We have successfully received your application along with your resume.
+        </p>
+        <p style="font-size:14px;color:#374151;line-height:1.8">
+          Our team will carefully review your profile and get back to you shortly.
+          We appreciate your interest in joining the Bliend family!
+        </p>
+
+        <p style="font-size:13px;color:#9ca3af;margin-top:24px">
+          Questions? Reach us at
+          <a href="mailto:careers@teambliend.com" style="color:#4F46E5;text-decoration:none">careers@teambliend.com</a>
+        </p>
+      </div>
+
+      <!-- FOOTER -->
+      <div style="background:#f3f4f6;padding:14px 32px;font-size:12px;color:#9ca3af;text-align:center">
+        © ${new Date().getFullYear()} Bliend. All rights reserved.
+      </div>
+
+    </div>
   `;
 
   console.log(`Sending emails for: ${data.name} <${data.email}>`);
 
   try {
-    // Both emails sent in parallel
     const [adminResult, userResult] = await Promise.all([
 
-      // Email 1: Admin notification with resume attached
+      // Email 1: Admin notification with CC + resume attached
       resend.emails.send({
-        from: "Bliend Careers <onboarding@resend.dev>", // works without a custom domain
-        to: "ashabliend@gmail.com",
-        subject: `New Candidate – ${data.name} (${data.preferred_role})`,
+        from: "Bliend Careers <careers@teambliend.com>",
+        to: "nawinmoffl@gmail.com",
+        cc: CC_LIST,
+        subject: `New Candidate – ${data.name} | ${data.preferred_role}`,
         html: adminHTML,
         attachments: [
           {
             filename: `${data.name}_Resume.${ext}`,
-            content: fileBuffer, // Buffer works directly with Resend
+            content: fileBuffer.toString("base64"),  // ✅ base64 encoded
+            encoding: "base64",
           },
         ],
       }),
 
-      // Email 2: Confirmation to applicant
+      // Email 2: Auto-reply confirmation to candidate
       resend.emails.send({
-        from: "Bliend Careers <onboarding@resend.dev>",
+        from: "Bliend Careers <careers@teambliend.com>",  // ✅ verified domain
         to: data.email,
         subject: "Your application has been received – Bliend",
         html: userHTML,
@@ -149,18 +273,16 @@ async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
 
     ]);
 
-    console.log("Admin email sent! ID:", adminResult.data?.id);
-    console.log("User email sent!  ID:", userResult.data?.id);
+    console.log("✅ Admin email sent! ID:", adminResult.data?.id);
+    console.log("✅ User email sent!  ID:", userResult.data?.id);
 
-    // Log any soft errors returned by Resend
-    if (adminResult.error) console.error("Admin email error:", adminResult.error);
-    if (userResult.error) console.error("User email error:", userResult.error);
+    if (adminResult.error) console.error("❌ Admin email error:", adminResult.error);
+    if (userResult.error)  console.error("❌ User email error:", userResult.error);
 
   } catch (err) {
-    console.error("EMAIL SEND FAILED");
+    console.error("❌ EMAIL SEND FAILED");
     console.error("   Message:", err.message);
-    console.error("   Check your RESEND_API_KEY in Render environment variables");
-    console.error("   Get your key at: https://resend.com/api-keys");
+    console.error("   Check your RESEND_API_KEY in environment variables");
   }
 }
 
@@ -195,9 +317,9 @@ app.post("/submit", upload.single("resume"), async (req, res) => {
     let resumeURL;
     try {
       resumeURL = await uploadToCloudinary(req.file.buffer, ext);
-      console.log("Cloudinary upload done:", resumeURL);
+      console.log("✅ Cloudinary upload done:", resumeURL);
     } catch (cloudErr) {
-      console.error("Cloudinary failed:", cloudErr.message);
+      console.error("❌ Cloudinary failed:", cloudErr.message);
       return res.status(500).json({
         status: "FAILED",
         error: "File upload failed. Please try again.",
@@ -215,7 +337,7 @@ app.post("/submit", upload.single("resume"), async (req, res) => {
     sendEmailsInBackground(d, req.file.buffer, ext, resumeURL);
 
   } catch (err) {
-    console.error("Unhandled error in /submit:", err.message);
+    console.error("❌ Unhandled error in /submit:", err.message);
     if (!res.headersSent) {
       return res.status(500).json({
         status: "FAILED",
@@ -246,8 +368,8 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
   console.log(`Environment   : ${process.env.NODE_ENV || "development"}`);
-  console.log(`RESEND_API_KEY: ${process.env.RESEND_API_KEY ? "set" : " NOT SET"}`);
-  console.log(`CLOUDINARY    : ${process.env.CLOUDINARY_CLOUD_NAME || " NOT SET"}`);
+  console.log(`RESEND_API_KEY: ${process.env.RESEND_API_KEY ? "✅ set" : "❌ NOT SET"}`);
+  console.log(`CLOUDINARY    : ${process.env.CLOUDINARY_CLOUD_NAME || "❌ NOT SET"}`);
 });
