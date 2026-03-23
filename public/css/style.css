@@ -95,8 +95,9 @@ body{
     min-height: 100vh;
     min-width: 960px;
     overflow-x: scroll;
-    overflow-y: hidden;
+    overflow-y: scroll;
 	position:relative;
+	scrollbar-width:none;
 }
 .page_wrapper{
     width: 75%;
