@@ -178,6 +178,10 @@ async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
             <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">Preferred Role</td>
             <td style="padding:10px 14px;color:#111827">${data.preferred_role}</td>
           </tr>
+          <tr style="background:#f9fafb">
+            <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">Years of Experience</td>
+            <td style="padding:10px 14px;color:#111827">${data.experience}</td>
+          </tr>
           <tr>
             <td style="padding:10px 14px;font-weight:300;color:#374151">Expected Salary</td>
             <td style="padding:10px 14px;color:#111827">${data.expected_salary}</td>
