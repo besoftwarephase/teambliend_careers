@@ -131,8 +131,7 @@ position: relative;
 width:120px;
 }
 #logo:hover {
-background-image: url('images/bliend_b.png');
-width: 120px;
+transform: scale(1.1);
 transition: all .25s ease;
 }
 .logo_line{
