@@ -130,10 +130,10 @@ position: relative;
 .logo_section img{
 width:120px;
 }
-.logo_section:hover {
-    background-image: url('images/bliend_b.png');
-    /* height: 70px; */
-    width: 120px;
+#logo:hover {
+background-image: url('images/bliend_b.png');
+width: 120px;
+transition: all .25s ease;
 }
 .logo_line{
 width:60%;
@@ -183,6 +183,7 @@ color:white;
 .menu_list{
 font-size:12px;
 letter-spacing: 0.5px;
+font-weight:200px;
 }
 .menu_list:hover
 {
