@@ -263,10 +263,10 @@ font-weight: 300;
 grid-column:1 / -1;
 }
 .form_action{
-margin-top: 15px;
+margin-top: 38px;
 display: flex;
-justify-content: flex-end;
-margin-bottom: 15px;
+justify-content: space-between;
+margin-bottom: 10px;
 }
 .previous_btn{
 background: #bbb;
