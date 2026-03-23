@@ -199,6 +199,7 @@ left: 50%;
 transform: translateX(-50%);
 display: flex;
 gap: 30px;
+transition: transform 0.3s ease; 
 }
 
 .avatars img{
@@ -213,12 +214,9 @@ box-shadow:0 5px 15px rgba(0,0,0,0.15);
 
 .avatars img:hover
 {
-
-border:2px solid #3276b4;
-box-shadow:
-0 0 0 2px rgba(50,118,180,0.2),
-0 6px 16px rgba(0,0,0,0.25);
-transition:all .25s ease;
+  transition:all .25s ease;
+  transform: scale(1.2);
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 /* FOOTER */
@@ -292,15 +290,15 @@ style="width:16px;height:16px;transform:rotate(180deg);">
 
 
 <div class="avatars">
-<img src="images/image_1.jpg" style="border: 3px solid #878a916b;
-    width: 35px;
-    height: 35px;
+<img src="images/image_1.jpg" style="border: 3px solid #878a9187;
+    width: 40px;
+    height: 40px;
     margin-top: 10px;
     margin-right: -40px;">
-<img src="images/image_3.jpg" style="border: 3px solid #878a916b;margin-top: 5px;position: relative;z-index: 3;margin-right: -45px;">
-<img src="images/center_image.jpg" style="border: 3px solid #878a916b;width: 60px;height: 60px;position: relative;z-index: 7;">
-<img src="images/image_4.jpg" style="border: 3px solid #878a916b;margin-left: -45;margin-top: 5px;position: relative;z-index: 3;">
-<img src="images/image_5.jpg" style="border: 3px solid #878a916b;width: 35px;height: 35px;margin-top: 10px;margin-left: -45;
+<img src="images/image_3.jpg" style="border: 3px solid #878a9187;margin-top: 5px;position: relative;z-index: 3;margin-right: -45px;">
+<img src="images/center_image.jpg" style="border: 3px solid #878a9187;width: 60px;height: 60px;position: relative;z-index: 7;">
+<img src="images/image_4.jpg" style="border: 3px solid #878a9187;margin-left: -45;margin-top: 5px;position: relative;z-index: 3;">
+<img src="images/image_5.jpg" style="border: 3px solid #878a9187;width: 40px;height: 40px;margin-top: 10px;margin-left: -45;
 }">
 </div>
 
