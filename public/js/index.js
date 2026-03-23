@@ -524,7 +524,7 @@ prevBtn3.addEventListener("click", function () {
 $(function () {
 
 $("#dob").datepicker({
-    dateFormat: "mm/dd/yy",
+    dateFormat: "dd/mm/yy",
     duration: "fast",
     minDate: new Date(1995, 0, 1),
     maxDate: 0,
@@ -532,7 +532,7 @@ $("#dob").datepicker({
 });
 
 $("#joining_date").datepicker({
-    dateFormat: "mm/dd/yy",
+    dateFormat: "dd/mm/yy",
     minDate: 0,
     beforeShow: function(input, inst) {
         setTimeout(function () {
