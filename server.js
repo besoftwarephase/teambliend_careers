@@ -38,9 +38,9 @@ app.get("/health", (req, res) => {
 });
 
 /*=================== LOGO SETUP ==================*/
-app.get('/logo.svg', (req, res) => {
-  res.sendFile(__dirname + '/Bliend_w_logo_header.svg');
-});
+// app.get('/logo.svg', (req, res) => {
+//   res.sendFile(__dirname + '/Bliend_w_logo_header.svg');
+// });
 /* ================= FILE SETTINGS ================= */
 const ALLOWED_MIMETYPES = [
   "application/pdf",
