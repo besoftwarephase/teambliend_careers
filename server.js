@@ -151,7 +151,7 @@ async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
         <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
           <tr style="background:#f9fafb">
             <td style="padding:10px 14px;font-weight:300;color:#374151;width:45%">
-              1. When your creative idea faces rejection, what's your next move?
+              1. What are your hobbies or personal interests outside of work?
             </td>
             <td style="padding:10px 14px;color:#111827">${data.q_1}</td>
           </tr>
@@ -166,12 +166,6 @@ async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
               3. In a marketing campaign, what matters most — emotion, logic, or attention? Why?
             </td>
             <td style="padding:10px 14px;color:#111827">${data.q_3}</td>
-          </tr>
-          <tr>
-            <td style="padding:10px 14px;font-weight:300;color:#374151">
-              4. You have limited resources and time to launch a brand campaign. How would you still make it unforgettable?
-            </td>
-            <td style="padding:10px 14px;color:#111827">${data.q_4}</td>
           </tr>
         </table>
 
