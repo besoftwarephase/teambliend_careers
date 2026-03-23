@@ -89,14 +89,13 @@ img{
 }
 body{
     background: #1a1a1a;
-    /* display: flex;
+    display: flex;
     justify-content: center;
-    align-items: center; */
+    align-items: center;
     min-height: 100vh;
     min-width: 960px;
     overflow-x: scroll;
     overflow-y: scroll;
-	position:relative;
 	scrollbar-width:none;
 }
 .page_wrapper{
@@ -104,10 +103,10 @@ body{
     max-width: 1200px;
     padding: 10px;
     border-radius: 12px;
-    position: absolute;
+    /* position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%); */
 }
 .page_content{
     overflow: hidden;
