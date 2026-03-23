@@ -37,6 +37,10 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
+/*=================== LOGO SETUP ==================*/
+app.get('/logo.svg', (req, res) => {
+  res.sendFile(__dirname + '/Bliend_w_logo_header.svg');
+});
 /* ================= FILE SETTINGS ================= */
 const ALLOWED_MIMETYPES = [
   "application/pdf",
@@ -104,7 +108,7 @@ async function sendEmailsInBackground(data, fileBuffer, ext, resumeURL) {
 
       <!-- HEADER -->
       <div style="background:#4F46E5;padding:24px 32px">
-       <img src="Bliend_w_logo_header.svg" alt="Logo" style="height:40px;width:120px;object-fit:contain;" />
+      <img src="/logo.svg" alt="Logo" style="height:40px;width:120px;object-fit:contain;" />
         <h2 style="color:#fff;margin:0;font-size:20px;text-align:center">Candidate Job Application </h2>
         <p style="color:#c7d2fe;margin:6px 0 0;font-size:13px">
           Received on ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
