@@ -463,7 +463,7 @@ function validateStep3() {
 .then(data => {
     hideLoader();
 
-    alert("🎉 Application submitted successfully!");
+    alert("Application submitted successfully!");
     window.location.reload();
 })
 .catch(err => {
