@@ -196,7 +196,8 @@ font-weight:200px;
 }
 .menu_list.disabled
 {
-    font-weight: 200;
+   font-weight: 100 !important;
+   color: #ededed99;
 }
 .form_content{
 padding:25px;
