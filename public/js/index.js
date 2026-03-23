@@ -98,6 +98,7 @@ const q_1 = document.getElementById("Question_1");
 const q_2 = document.getElementById("Question_2");
 const q_3 = document.getElementById("Question_3");
 const q_5 = document.getElementById("job_role");
+const exp = document.getElementById("exp");
 const q_6 = document.getElementById("salary");
 const q_7 = document.getElementById("joining_date");
 const q_8 = document.getElementById("resume_file");
@@ -371,7 +372,7 @@ function validateStep2() {
 function validateStep3() {
     let isValid = true;
 
-    const fields = [q_5, q_6, q_7, q_9];
+    const fields = [q_5, exp, q_6, q_7, q_9];
 
     fields.forEach(fields => {
 
@@ -432,6 +433,7 @@ function validateStep3() {
 
 
     fd.append("preferred_role", q_5.value);
+    fd.append("experience", exp.value);
     fd.append("expected_salary", q_6.value);
     fd.append("joining_date", q_7.value);
 
