@@ -639,3 +639,11 @@ input::placeholder {
 .country_code:focus {
     color: #f5f5f5b8;
 }
+select.job_roles.selected-value {
+    color: #f5f5f5b8; /* color after selection */
+}
+select.job_roles {
+    color: #888888cc;
+    background-color: transparent;
+    border-radius: 4px;
+}
