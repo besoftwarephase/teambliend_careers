@@ -434,6 +434,7 @@ function validateStep3() {
 
     fd.append("preferred_role", q_5.value);
     fd.append("experience", exp.value);
+    fd.append("expected_salary", "₹ " + parseInt(q_6.value).toLocaleString("en-IN"));
     fd.append("expected_salary", q_6.value);
     fd.append("joining_date", q_7.value);
 
