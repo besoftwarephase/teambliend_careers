@@ -213,6 +213,7 @@ body {
     color: #777;
     margin-bottom: 30px;
     font-size: 13px;
+    margin-top: 10px;
 }
 
 .field_groups {
@@ -370,6 +371,7 @@ input {
     overflow: hidden;
     white-space: nowrap;
     width: 150px;
+    margin-top: 3px;
 }
 
 .profile_email {
