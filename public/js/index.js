@@ -477,6 +477,7 @@ $(function () {
 
 /*========== GET EMAIL ===========*/
 const storedEmail = localStorage.getItem("userEmail");
+console.log(storedEmail);
 
 if (storedEmail) {
     document.getElementById("profile_email").textContent = storedEmail;
