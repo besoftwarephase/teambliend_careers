@@ -109,7 +109,7 @@ body {
 
 .form-layout {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 220px 1fr 1fr;
     background: black;
 }
 
@@ -227,7 +227,8 @@ body {
     gap: 20px;
     overflow-y: auto;
     padding-right: 5px;
-    max-height: 225px;
+    max-height: 240px;
+    scrollbar-width:none;
 }
 
 .field_groups::-webkit-scrollbar {
