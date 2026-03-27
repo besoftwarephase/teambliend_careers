@@ -122,8 +122,28 @@
                                     <p class="error_messages" id="name_error"></p>
                                 </div>
                             </div>
+                            <div class="input_field" style="display: grid;grid-template-columns: 1fr 1fr;background: black;gap: 15px;">
+                                <fieldset class="highlight_text" id="fieldset_dob">
+                                    <legend class="legend_label">Age </legend>
+                                    <input type="text" id="dob" autocomplete="off" placeholder="How old are you?" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                </fieldset>
+                                <div class="error" style="margin-top: 8px;display: none;"><span class="span_error_img" id="span_error_img_1"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="dob_error"></p>
+                                </div>
+                                <fieldset class="highlight_text" id="fieldset_gender">
+                                    <legend class="legend_label">Gender </legend>
+                                    <select id="gender" class="highlight_text">
+                                        <option value="" disabled selected hidden>Select Gender</option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </fieldset>
+                                <div class="error" style="margin-top: 8px;display: none;"><span class="span_error_img" id="span_error_img_1"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="gender_error"></p>
+                                </div>
+                            </div>
 
-                            <div class="input_field">
+                            <!-- <div class="input_field">
                                 <fieldset class="highlight_text" id="fieldset_dob">
                                     <legend class="legend_label">Date of Birth</legend>
                                     <input type="text" id="dob" autocomplete="off" placeholder="DD/MM/YYYY">
@@ -131,7 +151,7 @@
                                 <div class="error" style="margin-top: 8px;display: none;"><span class="span_error_img" id="span_error_img_2"><img src="images/icons8-info-error.png" alt="error_image"></span>
                                     <p class="error_messages" id="dob_error"></p>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="input_field">
                                 <fieldset class="highlight_text" id="fieldset_email">
@@ -242,7 +262,7 @@
                                     <input type="number" class="highlight_text" id="salary" name="salary" placeholder="75,000"
                                         min="1" max="99999" oninput="this.value = this.value.slice(0, 5)"
                                         style="border:none !important;outline:none;flex:1;padding:8px 12px;background:transparent;color:#fff;width:100%;">
-                                    <span style="padding:8px 12px;color:#ffffff90;font-size:8px;white-space:nowrap;border-left:1px solid #f5f5f542;background:transparent;">Per month</span>
+                                    <span style="padding:8px 12px;color:#ffffff90;font-size:8px;white-space:nowrap;border-left:1px solid #f5f5f542;background:transparent;">Per Annum</span>
                                 </div>
                             </div>
 
