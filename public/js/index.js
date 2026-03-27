@@ -336,25 +336,56 @@ function validateStep3() {
     }
 
     /* FILE VALIDATION */
+    // const file = q_8.files[0];
+    // if (!file) {
+    //     q_8.style.setProperty('border-color', '#ff4d4f', 'important');
+    //     isValid = false;
+    // } else {
+    //     q_8.style.borderColor = "unset";
+    //     const allowedTypes = [
+    //         "application/pdf",
+    //         "application/msword",
+    //         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    //     ];
+    //     if (!allowedTypes.includes(file.type)) {
+    //         alert("Only PDF/DOC/DOCX allowed");
+    //         isValid = false;
+    //     } else if (file.size > 5 * 1024 * 1024) {
+    //         alert("Max size 5MB");
+    //         isValid = false;
+    //     }
+    // }
     const file = q_8.files[0];
-    if (!file) {
-        q_8.style.setProperty('border-color', '#ff4d4f', 'important');
+
+if (!file) {
+    q_8.style.setProperty('border-color', '#ff4d4f', 'important');
+    isValid = false;
+} else {
+    q_8.style.borderColor = "unset";
+
+    const allowedTypes = [
+        "application/pdf",
+        "application/msword",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ];
+
+    const allowedExtensions = ["pdf", "doc", "docx"];
+
+    const fileName = file.name.toLowerCase();
+    const fileExt = fileName.split(".").pop();
+
+    // check MIME type OR extension
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
+        alert("Only PDF / DOC / DOCX files are allowed");
+        q_8.value = "";  // clear file input
         isValid = false;
-    } else {
-        q_8.style.borderColor = "unset";
-        const allowedTypes = [
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ];
-        if (!allowedTypes.includes(file.type)) {
-            alert("Only PDF/DOC/DOCX allowed");
-            isValid = false;
-        } else if (file.size > 5 * 1024 * 1024) {
-            alert("Max size 5MB");
-            isValid = false;
-        }
+    } 
+    else if (file.size > 5 * 1024 * 1024) {
+        alert("Max size 5MB");
+        q_8.value = "";
+        isValid = false;
     }
+}
 
     if (!isValid) return;
 
