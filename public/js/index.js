@@ -519,31 +519,31 @@ prevBtn3.addEventListener("click", function () {
 });
 
 
-/*======== DATEPICKERS ============*/
-$(function () {
+// /*======== DATEPICKERS ============*/
+// $(function () {
 
-    $("#dob").datepicker({
-        dateFormat: "dd/mm/yy",
-        duration: "fast",
-        minDate: new Date(1990, 0, 1),
-        maxDate: new Date(2003, 11, 31),
-        defaultDate: new Date(1990, 0, 1)
-    });
+//     $("#dob").datepicker({
+//         dateFormat: "dd/mm/yy",
+//         duration: "fast",
+//         minDate: new Date(1990, 0, 1),
+//         maxDate: new Date(2003, 11, 31),
+//         defaultDate: new Date(1990, 0, 1)
+//     });
 
-    $("#joining_date").datepicker({
-        dateFormat: "dd/mm/yy",
-        minDate: 0,
-        beforeShow: function(input, inst) {
-            setTimeout(function () {
-                inst.dpDiv.css({
-                    top: $(input).offset().top + $(input).outerHeight() + 5,
-                    left: $(input).offset().left
-                });
-            }, 0);
-        }
-    });
+//     $("#joining_date").datepicker({
+//         dateFormat: "dd/mm/yy",
+//         minDate: 0,
+//         beforeShow: function(input, inst) {
+//             setTimeout(function () {
+//                 inst.dpDiv.css({
+//                     top: $(input).offset().top + $(input).outerHeight() + 5,
+//                     left: $(input).offset().left
+//                 });
+//             }, 0);
+//         }
+//     });
 
-});
+// });
 
 
 /*========== GET EMAIL ===========*/
