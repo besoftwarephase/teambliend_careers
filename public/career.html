@@ -40,28 +40,29 @@
     }
 
     .custom_select_trigger {
-        width: 100%;
-        padding: 8px 12px;
-        color: #f5f5f5a0;
-        cursor: pointer;
-        background: transparent;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family: 'inter', sans-serif;
-        font-size: 14px;
-        box-sizing: border-box;
+    width: 100%;
+    padding: 8px 12px;
+    color: #f5f5f5a0;
+    cursor: pointer;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'inter', sans-serif;
+    font-size: 11px;
+    box-sizing: border-box;
+    font-weight: 100;
     }
 
     .custom_select_trigger::after {
         content: '▾';
-        font-size: 14px;
+        font-size: 12px;
         color: #f5f5f5a0;
         flex-shrink: 0;
     }
 
     .custom_select_trigger.selected {
-        color: #fff;
+        color: #f5f5f5b8;
     }
 
     /* ─── OUTER BOX for Male / Female options ─── */
@@ -72,7 +73,7 @@
         left: 0;
         width: 100%;
         background: #1a1a1a;
-        border: 1.5px solid #ffffff40; /* 👈 CHANGE THIS COLOR TO YOUR PREFERENCE */
+        border: 1px solid #ffffff40; /* 👈 CHANGE THIS COLOR TO YOUR PREFERENCE */
         border-radius: 6px;
         z-index: 999;
         overflow: hidden;
@@ -87,7 +88,7 @@
         padding: 10px 14px;
         color: #f5f5f5cc;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 12px;
         font-family: 'inter', sans-serif;
         transition: background 0.15s;
     }
@@ -99,7 +100,7 @@
 
     .custom_option.active {
         background: #ffffff10;
-        color: #fff;
+        color: #f5f5f5b8;
     }
     </style>
 </head>
