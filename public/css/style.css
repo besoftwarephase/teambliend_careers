@@ -437,8 +437,21 @@ input {
     outline: none;
     border-color: #000;
 }
-fieldset.highlight_text select#gender.selected {
-    color: #f5f5f542 !important;
+/* Default placeholder color */
+select#gender {
+    color: #f5f5f542; /* muted/placeholder color */
+}
+
+/* After selection */
+select#gender.selected {
+    color: #ffffff; /* bright white when selected */
+}
+select.job_roles {
+    color: #f5f5f542; /* placeholder muted */
+}
+
+select.job_roles.selected {
+    color: #ffffff;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
