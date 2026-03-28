@@ -1,24 +1,6 @@
-/*======== COUNTRY CODE ============*/
-
-//   const input = document.querySelector("#phone");
-
-//   const iti = window.intlTelInput(input, {
-//     initialCountry: "in",          // Default country (India)
-//     separateDialCode: true,        // Shows +91 separately
-//     preferredCountries: ["in","us","gb"],
-//     utilsScript:
-//       "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.21/js/utils.js"
-//   });
-// if (iti.isValidNumber()) {
-//   console.log("Valid number");
-// } else {
-//   console.log("Invalid number");
-// }
-
 /*======== LOADER ============*/
 const loader = document.getElementById("myModal");
 const closeBtn = document.querySelector(".close");
-const submitBtn = document.getElementById("submit_btn");
 
 /* SHOW LOADER */
 function showLoader() {
@@ -37,7 +19,7 @@ closeBtn.addEventListener("click", function () {
     hideLoader();
 });
 
-/* CLICK OUTSIDE CLOSE */
+/* CLICK OUTSIDE MODAL TO CLOSE */
 window.addEventListener("click", function (e) {
     if (e.target === loader) {
         hideLoader();
@@ -45,64 +27,75 @@ window.addEventListener("click", function (e) {
 });
 
 
-/*======== HIGHLIGHT TEXTS  ============*/
+/*======== HIGHLIGHT TEXTS ============*/
 const fields = document.querySelectorAll(".highlight_text");
 
-fields.forEach(field => {
+fields.forEach(function (field) {
 
+    /* FOCUS IN — add active border, clear errors */
     field.addEventListener("focusin", function () {
-
         this.classList.add("active-field");
         this.classList.add("active-text");
 
-        /* remove red border */
+        /* Remove red border */
         this.style.borderColor = "unset";
 
-        /* find parent input container */
+        /* Find parent input container */
         const container = this.closest(".input_field");
-
         if (container) {
-
-            /* hide error box */
             const errorBox = container.querySelector(".error");
-            if (errorBox) {
-                errorBox.style.display = "none";
-            }
-            /* remove error message */
+            if (errorBox) errorBox.style.display = "none";
+
             const errorText = container.querySelector(".error_messages");
-            if (errorText) {
-                errorText.innerText = "";
-            }
-
+            if (errorText) errorText.innerText = "";
         }
-
     });
 
+    /* FOCUS OUT */
     field.addEventListener("focusout", function () {
         this.classList.remove("active-field");
         this.classList.add("active-text");
     });
 
+    /* FIX: Highlight background when field has a value (input = live typing) */
+    field.addEventListener("input", function () {
+        if (this.value.trim() !== "") {
+            this.style.backgroundColor = "#f5f5f5";
+        } else {
+            this.style.backgroundColor = "";
+        }
+    });
+
+    /* FIX: Highlight background when field has a value (change = selects / datepicker / file) */
+    field.addEventListener("change", function () {
+        if (this.value.trim() !== "") {
+            this.style.backgroundColor = "#f5f5f5";
+        } else {
+            this.style.backgroundColor = "";
+        }
+    });
+
 });
 
-/*======== GLOBAL ELEMENTS  ============*/
-const fullName = document.getElementById("name");
-const email = document.getElementById("email");
-const phone = document.getElementById("phone");
-const dob = document.getElementById("dob");
-const gender = document.getElementById("gender");
+
+/*======== GLOBAL ELEMENTS ============*/
+const fullName        = document.getElementById("name");
+const email           = document.getElementById("email");
+const phone           = document.getElementById("phone");
+const dob             = document.getElementById("dob");
+const gender          = document.getElementById("gender");
 const currentLocation = document.getElementById("location");
-const describe = document.getElementById("describe");
+const describe        = document.getElementById("describe");
 
 const q_1 = document.getElementById("Question_1");
 const q_2 = document.getElementById("Question_2");
 const q_3 = document.getElementById("Question_3");
 const q_5 = document.getElementById("job_role");
-const exp = document.getElementById("exp");
-const q_6 = document.getElementById("salary");
-const q_7 = document.getElementById("joining_date");
-const q_8 = document.getElementById("resume_file");
-const q_9 = document.getElementById("addition");
+const exp  = document.getElementById("exp");
+const q_6  = document.getElementById("salary");
+const q_7  = document.getElementById("joining_date");
+const q_8  = document.getElementById("resume_file");
+const q_9  = document.getElementById("addition");
 
 const page1 = document.getElementById("step1_content");
 const page2 = document.getElementById("step2_content");
@@ -115,25 +108,17 @@ const TICK_SVG = `<svg width="12" height="12" viewBox="0 0 12 12" fill="none" xm
   <polyline points="1.5,6 4.5,9.5 10.5,2.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>`;
 
-/**
- * setCircleState — updates a single step_circles element
- * @param {number} index  - 0, 1, or 2
- * @param {string} state  - "active" | "completed" | "disabled"
- */
 function setCircleState(index, state) {
-    /* Desktop circles (inside .menu_bar) */
     const desktopCircles = document.querySelectorAll(".menu_bar .step_circles");
-    /* Mobile circles */
     const mobileCircles = [
         document.getElementById("m_step1_circle"),
         document.getElementById("m_step2_circle"),
         document.getElementById("m_step3_circle")
     ];
 
-    [desktopCircles[index], mobileCircles[index]].forEach(function(circle) {
+    [desktopCircles[index], mobileCircles[index]].forEach(function (circle) {
         if (!circle) return;
 
-        /* Remove all state classes */
         circle.classList.remove("active", "completed", "disabled");
 
         if (state === "completed") {
@@ -141,24 +126,18 @@ function setCircleState(index, state) {
             circle.innerHTML = TICK_SVG;
         } else if (state === "active") {
             circle.classList.add("active");
-            circle.innerHTML = index + 1;  /* Restore number */
+            circle.innerHTML = index + 1;
         } else {
             circle.classList.add("disabled");
-            circle.innerHTML = index + 1;  /* Restore number */
+            circle.innerHTML = index + 1;
         }
     });
 }
 
-/**
- * setMenuState — updates a single menu_list element
- * @param {number} index  - 0, 1, or 2
- * @param {string} state  - "active" | "completed" | "disabled"
- */
+
 function setMenuState(index, state) {
-    /* Desktop menu items */
-    const desktopMenus = document.querySelectorAll(".menu_bar .menu_list");
-    /* Mobile labels */
-    const mobileLabels = [
+    const desktopMenus  = document.querySelectorAll(".menu_bar .menu_list");
+    const mobileLabels  = [
         document.getElementById("m_step1_label"),
         document.getElementById("m_step2_label"),
         document.getElementById("m_step3_label")
@@ -179,16 +158,14 @@ function setMenuState(index, state) {
 
 
 /*======== VALIDATE STEP 1 ============*/
-function validateStep1()
-{
+function validateStep1() {
     let isValid = true;
 
-    /* REGEX */
-    const nameRegex = /^[A-Za-z\s]{3,}$/;
+    const nameRegex  = /^[A-Za-z\s]{3,}$/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{10,15}$/;
 
-    /* NAME VALIDATION */
+    /* NAME */
     if (fullName.value.trim() === "") {
         document.getElementById("fieldset_name").style.borderColor = "#ff4d4f";
         document.getElementById("name_error").innerText = "Full name is required";
@@ -205,7 +182,7 @@ function validateStep1()
         document.querySelector("#fieldset_name").closest(".input_field").querySelector(".error").style.display = "none";
     }
 
-    /* GENDER VALIDATION */
+    /* GENDER */
     if (gender.value === "") {
         document.getElementById("fieldset_gender").style.borderColor = "#ff4d4f";
         document.getElementById("gender_error").innerText = "Gender field is required";
@@ -217,45 +194,37 @@ function validateStep1()
         document.querySelector("#fieldset_gender").closest(".input_field").querySelector(".error").style.display = "none";
     }
 
-     /* AGE VALIDATION */
+    /* AGE */
     if (dob.value.trim() === "") {
-    document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
-    document.getElementById("dob_error").innerText = "Age is required";
-    document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
-    isValid = false;
-
+        document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
+        document.getElementById("dob_error").innerText = "Age is required";
+        document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
+        isValid = false;
     } else {
         const age = Number(dob.value.trim());
-
         if (isNaN(age)) {
             document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
             document.getElementById("dob_error").innerText = "Enter valid age";
             document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
             isValid = false;
-
         } else if (age < 21) {
-            // 🔴 Less than 21
             document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
             document.getElementById("dob_error").innerText = "Minimum age is 21";
             document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
             isValid = false;
-
         } else if (age > 45) {
-            // 🔴 Greater than 45
             document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
             document.getElementById("dob_error").innerText = "Maximum age is 45";
             document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
             isValid = false;
-
         } else {
-            // ✅ Valid age
             document.getElementById("dob_error").innerText = "";
             document.getElementById("fieldset_dob").style.borderColor = "unset";
             document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "none";
         }
     }
 
-    /* EMAIL VALIDATION */
+    /* EMAIL */
     if (email.value.trim() === "") {
         document.getElementById("fieldset_email").style.borderColor = "#ff4d4f";
         document.getElementById("email_error").innerText = "Email is required";
@@ -272,7 +241,7 @@ function validateStep1()
         document.querySelector("#fieldset_email").closest(".input_field").querySelector(".error").style.display = "none";
     }
 
-    /* PHONE VALIDATION */
+    /* PHONE */
     if (phone.value.trim() === "") {
         document.getElementById("fieldset_number").style.borderColor = "#ff4d4f";
         document.getElementById("contact_error").innerText = "Contact number required";
@@ -289,7 +258,7 @@ function validateStep1()
         document.querySelector("#fieldset_number").closest(".input_field").querySelector(".error").style.display = "none";
     }
 
-    /* LOCATION VALIDATION */
+    /* LOCATION */
     if (currentLocation.value.trim() === "") {
         document.getElementById("fieldset_location").style.borderColor = "#ff4d4f";
         document.getElementById("location_error").innerText = "Location required";
@@ -301,22 +270,21 @@ function validateStep1()
         document.querySelector("#fieldset_location").closest(".input_field").querySelector(".error").style.display = "none";
     }
 
-    /* DESCRIPTION VALIDATION */
+    /* DESCRIBE */
     if (describe.value.trim() === "") {
         document.getElementById("describe_field").style.setProperty("border-color", "#ff4d4f", "important");
         isValid = false;
+    } else {
+        document.getElementById("describe_field").style.setProperty("border-color", "unset", "important");
     }
 
-    /* IF ALL VALID MOVE TO STEP 2 */
+    /* IF ALL VALID → MOVE TO STEP 2 */
     if (isValid) {
         page1.style.display = "none";
         page2.style.display = "block";
 
-        /* Step 1 → completed (green circle with tick) */
         setCircleState(0, "completed");
         setMenuState(0, "completed");
-
-        /* Step 2 → active */
         setCircleState(1, "active");
         setMenuState(1, "active");
     }
@@ -328,26 +296,22 @@ function validateStep2() {
     let isValid = true;
 
     const qFields = [q_1, q_2, q_3];
-
-    qFields.forEach(function(f) {
+    qFields.forEach(function (f) {
         if (f.value.trim() === "") {
-            f.style.setProperty('border-color', '#ff4d4f', 'important');
+            f.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
         } else {
             f.style.borderColor = "unset";
         }
     });
 
-    /* IF ALL VALID MOVE TO STEP 3 */
+    /* IF ALL VALID → MOVE TO STEP 3 */
     if (isValid) {
         page2.style.display = "none";
         page3.style.display = "block";
 
-        /* Step 2 → completed (green circle with tick) */
         setCircleState(1, "completed");
         setMenuState(1, "completed");
-
-        /* Step 3 → active */
         setCircleState(2, "active");
         setMenuState(2, "active");
     }
@@ -359,108 +323,80 @@ function validateStep3() {
     let isValid = true;
 
     const stepFields = [q_5, exp, q_6, q_7, q_9];
-    stepFields.forEach(function(field) {
+    stepFields.forEach(function (field) {
         if (field.value.trim() === "") {
-            field.style.setProperty('border-color', '#ff4d4f', 'important');
+            field.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
         } else {
             field.style.borderColor = "unset";
         }
     });
 
-    /* SALARY VALIDATION */
+    /* SALARY — must be a number */
     if (q_6.value.trim() !== "" && isNaN(parseInt(q_6.value))) {
-        q_6.style.setProperty('border-color', '#ff4d4f', 'important');
+        q_6.style.setProperty("border-color", "#ff4d4f", "important");
         isValid = false;
     }
 
     /* FILE VALIDATION */
-    // const file = q_8.files[0];
-    // if (!file) {
-    //     q_8.style.setProperty('border-color', '#ff4d4f', 'important');
-    //     isValid = false;
-    // } else {
-    //     q_8.style.borderColor = "unset";
-    //     const allowedTypes = [
-    //         "application/pdf",
-    //         "application/msword",
-    //         "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    //     ];
-    //     if (!allowedTypes.includes(file.type)) {
-    //         alert("Only PDF/DOC/DOCX allowed");
-    //         isValid = false;
-    //     } else if (file.size > 5 * 1024 * 1024) {
-    //         alert("Max size 5MB");
-    //         isValid = false;
-    //     }
-    // }
     const file = q_8.files[0];
 
-if (!file) {
-    q_8.style.setProperty('border-color', '#ff4d4f', 'important');
-    isValid = false;
-} else {
-    q_8.style.borderColor = "unset";
-
-    const allowedTypes = [
-        "application/pdf",
-        "application/msword",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-    ];
-
-    const allowedExtensions = ["pdf", "doc", "docx"];
-
-    const fileName = file.name.toLowerCase();
-    const fileExt = fileName.split(".").pop();
-
-    // check MIME type OR extension
-    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
-        alert("Only PDF / DOC / DOCX files are allowed");
-        q_8.value = "";  // clear file input
+    if (!file) {
+        q_8.style.setProperty("border-color", "#ff4d4f", "important");
         isValid = false;
-    } 
-    else if (file.size > 5 * 1024 * 1024) {
-        alert("Max size 5MB");
-        q_8.value = "";
-        isValid = false;
+    } else {
+        q_8.style.borderColor = "unset";
+
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ];
+        const allowedExtensions = ["pdf", "doc", "docx"];
+        const fileExt = file.name.toLowerCase().split(".").pop();
+
+        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
+            alert("Only PDF / DOC / DOCX files are allowed");
+            q_8.value = "";
+            isValid = false;
+        } else if (file.size > 5 * 1024 * 1024) {
+            alert("Max file size is 5MB");
+            q_8.value = "";
+            isValid = false;
+        }
     }
-}
 
     if (!isValid) return;
 
-    /* Step 3 → completed (green circle with tick) */
+    /* Step 3 → completed */
     setCircleState(2, "completed");
     setMenuState(2, "completed");
 
     showLoader();
 
     const fd = new FormData();
-
-    fd.append("name", fullName.value);
-    fd.append("email", email.value);
-    fd.append("phone", phone.value);
-    fd.append("dob", dob.value);
-    fd.append("gender",gender.value);
-    fd.append("location", currentLocation.value);
-    fd.append("describe", describe.value);
-
-    fd.append("q_1", q_1.value);
-    fd.append("q_2", q_2.value);
-    fd.append("q_3", q_3.value);
-
-    fd.append("preferred_role", q_5.value);
-    fd.append("experience", exp.value);
+    fd.append("name",            fullName.value);
+    fd.append("email",           email.value);
+    fd.append("phone",           phone.value);
+    fd.append("dob",             dob.value);
+    fd.append("gender",          gender.value);
+    fd.append("location",        currentLocation.value);
+    fd.append("describe",        describe.value);
+    fd.append("q_1",             q_1.value);
+    fd.append("q_2",             q_2.value);
+    fd.append("q_3",             q_3.value);
+    fd.append("preferred_role",  q_5.value);
+    fd.append("experience",      exp.value);
     fd.append("expected_salary", "₹ " + parseInt(q_6.value).toLocaleString("en-IN"));
-    fd.append("joining_date", q_7.value);
-
-    fd.append("resume", file);
-    fd.append("message", q_9.value);
+    fd.append("joining_date",    q_7.value);
+    fd.append("resume",          file);
+    fd.append("message",         q_9.value);
 
     fetch("/submit", {
         method: "POST",
         body: fd
     })
-    .then(async res => {
+    .then(async function (res) {
         let data;
         try {
             data = await res.json();
@@ -472,12 +408,12 @@ if (!file) {
         }
         return data;
     })
-    .then(data => {
+    .then(function () {
         hideLoader();
         alert("Application submitted successfully!");
         window.location.href = "/";
     })
-    .catch(err => {
+    .catch(function (err) {
         hideLoader();
         console.error("ERROR:", err);
         alert(err.message);
@@ -485,90 +421,68 @@ if (!file) {
 }
 
 
-/*======== PREVIOUS STEP 2 ============*/
-var prevBtn2 = document.getElementById('prevBtn2');
-
-prevBtn2.addEventListener("click", function () {
-    page2.style.display = "none";
-    page1.style.display = "block";
-
-    /* Step 2 → disabled */
-    setCircleState(1, "disabled");
-    setMenuState(1, "disabled");
-
-    /* Step 1 → active (restore number, NOT tick) */
-    setCircleState(0, "active");
-    setMenuState(0, "active");
-});
-
-
-/*======== PREVIOUS STEP 3 ============*/
-var prevBtn3 = document.getElementById('prevBtn3');
-
-prevBtn3.addEventListener("click", function () {
-    page3.style.display = "none";
-    page2.style.display = "block";
-
-    /* Step 3 → disabled */
-    setCircleState(2, "disabled");
-    setMenuState(2, "disabled");
-
-    /* Step 2 → active (restore number, NOT tick) */
-    setCircleState(1, "active");
-    setMenuState(1, "active");
-});
-
-
-// /*======== DATEPICKERS ============*/
+/*======== DATEPICKER ============*/
 $(function () {
-
-//     $("#dob").datepicker({
-//         dateFormat: "dd/mm/yy",
-//         duration: "fast",
-//         minDate: new Date(1990, 0, 1),
-//         maxDate: new Date(2003, 11, 31),
-//         defaultDate: new Date(1990, 0, 1)
-//     });
-
     $("#joining_date").datepicker({
         dateFormat: "dd/mm/yy",
         minDate: 0,
-        beforeShow: function(input, inst) {
+        beforeShow: function (input, inst) {
             setTimeout(function () {
                 inst.dpDiv.css({
-                    top: $(input).offset().top + $(input).outerHeight() + 5,
+                    top:  $(input).offset().top + $(input).outerHeight() + 5,
                     left: $(input).offset().left
                 });
             }, 0);
         }
     });
-
 });
 
 
-/*========== GET EMAIL ===========*/
+/*======== GET EMAIL FROM LOCALSTORAGE ============*/
 const storedEmail = localStorage.getItem("userEmail");
-console.log(storedEmail);
 
 if (storedEmail) {
-    document.getElementById("profile_email").textContent = storedEmail;
-    let arr = storedEmail.split("");
-    let firstLetter = arr[0];
-    let result = firstLetter.charAt(0).toUpperCase() + firstLetter.slice(1);
-    document.getElementById('profile_img').textContent = result;
+    const profileEmail = document.getElementById("profile_email");
+    const profileImg   = document.getElementById("profile_img");
+    const mobileIcon   = document.getElementById("mobile_profile_icon");
 
-    /* Sync mobile profile icon */
-    var mobileIcon = document.getElementById('mobile_profile_icon');
-    if (mobileIcon) {
-        mobileIcon.textContent = result;
+    if (profileEmail) profileEmail.textContent = storedEmail;
+
+    const firstLetter = storedEmail.charAt(0).toUpperCase();
+
+    if (profileImg)  profileImg.textContent  = firstLetter;
+    if (mobileIcon)  mobileIcon.textContent  = firstLetter;
+}
+
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* PREVIOUS — Step 2 → Step 1 */
+    var prevBtn2 = document.getElementById("prevBtn2");
+    if (prevBtn2) {
+        prevBtn2.addEventListener("click", function () {
+            page2.style.display = "none";
+            page1.style.display = "block";
+
+            setCircleState(1, "disabled");
+            setMenuState(1, "disabled");
+            setCircleState(0, "active");
+            setMenuState(0, "active");
+        });
     }
-}
 
+    /* PREVIOUS — Step 3 → Step 2 */
+    var prevBtn3 = document.getElementById("prevBtn3");
+    if (prevBtn3) {
+        prevBtn3.addEventListener("click", function () {
+            page3.style.display = "none";
+            page2.style.display = "block";
 
-const countryCode = document.getElementById("countryCode");
-const phoneNumber = document.getElementById("phone");
+            setCircleState(2, "disabled");
+            setMenuState(2, "disabled");
+            setCircleState(1, "active");
+            setMenuState(1, "active");
+        });
+    }
 
-function getFullNumber() {
-    const fullNumber = countryCode.value + phoneNumber.value;
-    console.log(fullNumber);
-}
+});
