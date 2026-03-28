@@ -694,7 +694,7 @@ input::placeholder {
    ============================================================ */
 .mobile_topbar {
     display: none;
-    background: linear-gradient(120deg, #1c1c1c, #3a3a3a);
+    /* background: linear-gradient(120deg, #1c1c1c, #3a3a3a); */
     padding: 16px 16px;
     align-items: center;
     justify-content: space-between;
@@ -726,7 +726,7 @@ input::placeholder {
 .mobile_steps {
     display: none;
     background: #111;
-    padding: 14px 16px;
+    padding: 20px 16px;
     gap: 8px;
     align-items: center;
     justify-content: center;
@@ -1003,14 +1003,14 @@ input::placeholder {
 
     /* Buttons full width on mobile */
     .form_action {
-        margin-top: 20px;
+        margin-top: -20px;
         flex-direction: column;
         gap: 10px;
         margin-bottom: 10px;
     }
 
     .form_action_2 {
-        margin-top: 20px;
+        margin-top: -20px;
         gap: 10px;
         margin-bottom: 10px;
     }
