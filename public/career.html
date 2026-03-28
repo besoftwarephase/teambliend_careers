@@ -193,7 +193,7 @@
                             <div class="input_field" >
                                 <fieldset class="highlight_text" id="fieldset_dob">
                                     <legend class="legend_label"> Age </legend>
-                                    <input type="text" id="dob" autocomplete="off" placeholder="How old are you?" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                                    <input type="text" id="dob" autocomplete="off" placeholder="How old are you?" maxlength="2"  oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)">
                                 </fieldset>
                                 <div class="error" style="margin-top: 8px;display: none;"><span class="span_error_img" id="span_error_img_1"><img src="images/icons8-info-error.png" alt="error_image"></span>
                                     <p class="error_messages" id="dob_error"></p>
