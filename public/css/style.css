@@ -440,19 +440,19 @@ input {
 }
 /* Default placeholder color */
 select#gender {
-    color: #f5f5f542; /* muted/placeholder color */
+    color: #888888cc ;
 }
 
 /* After selection */
 select#gender.selected {
-    color: #ffffff; /* bright white when selected */
+    color: #f5f5f5b8 !important;
 }
 select.job_roles {
-    color: #f5f5f542; /* placeholder muted */
+    color: #ffffffb0 !important;
 }
 
 select.job_roles.selected {
-    color: #ffffff;
+    color: red;
 }
 
 input[type="number"]::-webkit-outer-spin-button,
