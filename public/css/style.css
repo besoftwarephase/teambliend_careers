@@ -690,6 +690,10 @@ input::placeholder {
     border: none !important;
     outline: none;
 }
+.salary
+{
+    width:98%;
+}
 /* ============================================================
    MOBILE TOPBAR (hidden on desktop)
    ============================================================ */
@@ -899,6 +903,10 @@ input::placeholder {
         margin-bottom: 10px;
         margin-top: 20px;
     }
+    .salary
+    {
+        width:100%;
+    }
 }
 
 /* ============================================================
@@ -1064,6 +1072,10 @@ input::placeholder {
         font-weight: 100;
         margin-bottom: 5px;
         margin-top: 20px;
+    }
+    .salary
+    {
+        width:100%;
     }
 }
 
