@@ -94,6 +94,7 @@ const q_2 = document.getElementById("Question_2");
 const q_3 = document.getElementById("Question_3");
 const q_5 = document.getElementById("job_role");
 const exp  = document.getElementById("exp");
+const work_location = document.getElementById("work_location")
 const q_6  = document.getElementById("salary");
 const q_7  = document.getElementById("joining_date");
 const q_8  = document.getElementById("resume_file");
@@ -346,12 +347,12 @@ function validateStep3() {
     /* FIX: work_location is a radio button group — use querySelector to get checked value */
     const selectedWorkLocation = document.querySelector('input[name="work_location"]:checked');
     if (!selectedWorkLocation) {
-        const radioGroup = document.getElementById("work_location_group");
+        const radioGroup = document.getElementById("work_location");
         if (radioGroup) radioGroup.style.setProperty("border-color", "#ff4d4f", "important");
         console.warn("Work location not selected");
         isValid = false;
     } else {
-        const radioGroup = document.getElementById("work_location_group");
+        const radioGroup = document.getElementById("work_location");
         if (radioGroup) radioGroup.style.removeProperty("border-color");
     }
 
