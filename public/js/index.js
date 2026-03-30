@@ -345,14 +345,14 @@ function validateStep3() {
     }
 
     /* FIX: work_location is a radio button group — use querySelector to get checked value */
-    const selectedWorkLocation = document.querySelector('input[name="work_location"]:checked');
+    const selectedWorkLocation = document.querySelector('input[name="Work_Location"]:checked');
     if (!selectedWorkLocation) {
-        const radioGroup = document.getElementById("work_location");
+        const radioGroup = document.getElementById("Work_Location");
         if (radioGroup) radioGroup.style.setProperty("border-color", "#ff4d4f", "important");
         console.warn("Work location not selected");
         isValid = false;
     } else {
-        const radioGroup = document.getElementById("work_location");
+        const radioGroup = document.getElementById("Work_Location");
         if (radioGroup) radioGroup.style.removeProperty("border-color");
     }
 
