@@ -66,7 +66,6 @@
         width: 100%;
         padding: 9px 12px;
         background: #000;
-        border: 1px solid #f5f5f542;
         border-radius: 5px;
         cursor: pointer;
         display: flex;
@@ -79,12 +78,9 @@
         box-sizing: border-box;
         user-select: none;
         transition: border-color 0.2s;
+        border: none;
     }
     .cd-trigger:hover { border-color: #f5f5f580; }
-    .cd-trigger.cd-open {
-        border-color: #2563eb69;
-        box-shadow: 0 0 0 2px #2563eb2b;
-    }
     .cd-trigger.cd-selected { color: #f5f5f5b8; }
     .cd-arrow {
         width: 12px;
@@ -119,6 +115,11 @@
     }
     .cd-option:hover { background: #ffffff12; color: #f5f5f5cc; }
     .cd-option.cd-active { background: #2563eb18; color: #f5f5f5b8; }
+
+    /* Active state for Step 3 plain cd-wrapper dropdowns */
+    .cd-wrapper.active-field {
+        border-color: unset ;
+    }
     /* ─── End Custom Dropdown ─── */
     </style>
 </head>
@@ -336,7 +337,7 @@
                             <div class="input_field">
                                 <p class="Questions">1. Preferred Role / Area of Interest</p>
                                 <input type="hidden" id="job_role" name="job_role" value="">
-                                <div class="cd-wrapper" id="job_role_wrapper">
+                                <div class="cd-wrapper" id="job_role_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
                                     <div class="cd-trigger" id="job_role_trigger" onclick="cdToggle('job_role')">
                                         <span id="job_role_label">Available Positions</span>
                                         <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
@@ -359,7 +360,7 @@
                             <div class="input_field">
                                 <p class="Questions">Experience</p>
                                 <input type="hidden" id="exp" name="experience" value="">
-                                <div class="cd-wrapper" id="exp_wrapper">
+                                <div class="cd-wrapper" id="exp_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
                                     <div class="cd-trigger" id="exp_trigger" onclick="cdToggle('exp')">
                                         <span id="exp_label">Years Of Experience</span>
                                         <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
@@ -481,21 +482,69 @@
 
 <!-- ─── Custom Dropdown JS ─── -->
 <script>
-function cdToggle(id) {
-    var trigger = document.getElementById(id + '_trigger');
-    var menu = document.getElementById(id + '_menu');
-    var isOpen = menu.classList.contains('cd-open');
-    document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) { m.classList.remove('cd-open'); });
-    document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) { t.classList.remove('cd-open'); });
-    document.querySelectorAll('fieldset.cd-focused').forEach(function(f) { f.classList.remove('cd-focused'); });
-    if (!isOpen) {
-        trigger.classList.add('cd-open');
-        menu.classList.add('cd-open');
-        var wrapper = document.getElementById(id + '_wrapper');
-        if (wrapper) { var fs = wrapper.closest('fieldset'); if (fs) fs.classList.add('cd-focused'); }
+/*
+ * cdGetTarget(id)
+ * ──────────────
+ * Returns the element that should receive focus/blur classes.
+ * - If the cd-wrapper sits inside a fieldset.highlight_text  → return that fieldset  (Gender)
+ * - Otherwise                                                → return the cd-wrapper itself (Job Role, Experience)
+ */
+function cdGetTarget(id) {
+    var wrapper = document.getElementById(id + '_wrapper');
+    if (!wrapper) return null;
+    var fs = wrapper.closest('fieldset.highlight_text');
+    return fs ? fs : wrapper;
+}
+
+/* ─── Simulate focusin (open) ─── */
+function cdFieldFocusIn(id) {
+    var target = cdGetTarget(id);
+    if (!target) return;
+    target.classList.add('active-field');
+    target.classList.add('active-text');
+    target.style.borderColor = 'unset';
+    /* Clear error box (only relevant when target is a fieldset inside .input_field) */
+    var container = target.closest('.input_field');
+    if (container) {
+        var errorBox = container.querySelector('.error');
+        if (errorBox) errorBox.style.display = 'none';
+        var errorText = container.querySelector('.error_messages');
+        if (errorText) errorText.innerText = '';
     }
 }
 
+/* ─── Simulate focusout (close / outside click / option selected) ─── */
+function cdFieldFocusOut(id) {
+    var target = cdGetTarget(id);
+    if (!target) return;
+    target.classList.remove('active-field');
+    target.classList.add('active-text');
+}
+
+/* ─── Toggle open / close ─── */
+function cdToggle(id) {
+    var trigger = document.getElementById(id + '_trigger');
+    var menu    = document.getElementById(id + '_menu');
+    var isOpen  = menu.classList.contains('cd-open');
+
+    /* Close all open dropdowns first */
+    document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
+        var openId = m.id.replace('_menu', '');
+        cdFieldFocusOut(openId);
+        m.classList.remove('cd-open');
+    });
+    document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) {
+        t.classList.remove('cd-open');
+    });
+
+    if (!isOpen) {
+        trigger.classList.add('cd-open');
+        menu.classList.add('cd-open');
+        cdFieldFocusIn(id);   /* ← focusin on open */
+    }
+}
+
+/* ─── Select an option ─── */
 function cdSelect(id, label, value) {
     document.getElementById(id + '_label').textContent = label;
     document.getElementById(id).value = value;
@@ -506,18 +555,20 @@ function cdSelect(id, label, value) {
     document.querySelectorAll('#' + id + '_menu .cd-option').forEach(function(o) {
         o.classList.toggle('cd-active', o.textContent.trim() === label);
     });
-    var wrapper = document.getElementById(id + '_wrapper');
-    if (wrapper) {
-        var fs = wrapper.closest('fieldset');
-        if (fs) { fs.classList.remove('cd-focused'); fs.classList.add('cd-selected-field'); }
-    }
+    cdFieldFocusOut(id);   /* ← focusout on select */
 }
 
+/* ─── Click outside — close all ─── */
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.cd-wrapper')) {
-        document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) { m.classList.remove('cd-open'); });
-        document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) { t.classList.remove('cd-open'); });
-        document.querySelectorAll('fieldset.cd-focused').forEach(function(f) { f.classList.remove('cd-focused'); });
+        document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
+            var openId = m.id.replace('_menu', '');
+            cdFieldFocusOut(openId);   /* ← focusout on outside click */
+            m.classList.remove('cd-open');
+        });
+        document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) {
+            t.classList.remove('cd-open');
+        });
     }
 });
 </script>
