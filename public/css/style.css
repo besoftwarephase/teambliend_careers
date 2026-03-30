@@ -538,8 +538,8 @@ body.no-scroll {
 }
 
 .active-field {
-    border: 2px solid #2563eb69 !important;
-    box-shadow: #2563eb2b 0px 2px 2px 0px !important;
+    border-color: #2563eb69;
+    box-shadow: 0 0 0 2px #2563eb2b;
 }
 
 .active-text {
