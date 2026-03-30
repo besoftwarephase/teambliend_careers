@@ -300,6 +300,7 @@ function validateStep2() {
 
     const qFields = [q_1, q_2, q_3];
     qFields.forEach(function (f) {
+        if (!f) return; /* skip if element not found in DOM */
         if (f.value.trim() === "") {
             f.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
@@ -325,8 +326,10 @@ function validateStep2() {
 function validateStep3() {
     let isValid = true;
 
+    /* ── FIX: guard against null (element not found in DOM) ── */
     const stepFields = [q_5, exp, work_location, q_6, q_7, q_9];
     stepFields.forEach(function (field) {
+        if (!field) return; /* skip if getElementById returned null */
         if (field.value.trim() === "") {
             field.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
@@ -336,36 +339,47 @@ function validateStep3() {
     });
 
     /* SALARY — must be a number */
-    if (q_6.value.trim() !== "" && isNaN(parseInt(q_6.value))) {
+    if (q_6 && q_6.value.trim() !== "" && isNaN(parseInt(q_6.value))) {
         q_6.style.setProperty("border-color", "#ff4d4f", "important");
         isValid = false;
     }
 
-    /* FILE VALIDATION */
-    const file = q_8.files[0];
+    /* work_location radio/select — extra guard */
+    if (!work_location) {
+        console.warn("Element #work_location not found in the DOM");
+        isValid = false;
+    }
 
-    if (!file) {
-        q_8.style.setProperty("border-color", "#ff4d4f", "important");
+    /* FILE VALIDATION */
+    if (!q_8) {
+        console.warn("Element #resume_file not found in the DOM");
         isValid = false;
     } else {
-        q_8.style.borderColor = "unset";
+        const file = q_8.files[0];
 
-        const allowedTypes = [
-            "application/pdf",
-            "application/msword",
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-        ];
-        const allowedExtensions = ["pdf", "doc", "docx"];
-        const fileExt = file.name.toLowerCase().split(".").pop();
+        if (!file) {
+            q_8.style.setProperty("border-color", "#ff4d4f", "important");
+            isValid = false;
+        } else {
+            q_8.style.borderColor = "unset";
 
-        if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
-            alert("Only PDF / DOC / DOCX files are allowed");
-            q_8.value = "";
-            isValid = false;
-        } else if (file.size > 5 * 1024 * 1024) {
-            alert("Max file size is 5MB");
-            q_8.value = "";
-            isValid = false;
+            const allowedTypes = [
+                "application/pdf",
+                "application/msword",
+                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            ];
+            const allowedExtensions = ["pdf", "doc", "docx"];
+            const fileExt = file.name.toLowerCase().split(".").pop();
+
+            if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExt)) {
+                alert("Only PDF / DOC / DOCX files are allowed");
+                q_8.value = "";
+                isValid = false;
+            } else if (file.size > 5 * 1024 * 1024) {
+                alert("Max file size is 5MB");
+                q_8.value = "";
+                isValid = false;
+            }
         }
     }
 
@@ -388,13 +402,13 @@ function validateStep3() {
     fd.append("q_1",             q_1.value);
     fd.append("q_2",             q_2.value);
     fd.append("q_3",             q_3.value);
-    fd.append("preferred_role",  q_5.value);
-    fd.append("experience",      exp.value);
-    fd.append("expected_salary", "₹ " + parseInt(q_6.value).toLocaleString("en-IN"));
-    fd.append("joining_date",    q_7.value);
-    fd.append("work_location", work_location.value);
-    fd.append("resume",          file);
-    fd.append("message",         q_9.value);
+    fd.append("preferred_role",  q_5 ? q_5.value : "");
+    fd.append("experience",      exp ? exp.value : "");
+    fd.append("expected_salary", q_6 ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN") : "");
+    fd.append("joining_date",    q_7 ? q_7.value : "");
+    fd.append("work_location",   work_location ? work_location.value : "");
+    fd.append("resume",          q_8.files[0]);
+    fd.append("message",         q_9 ? q_9.value : "");
 
     fetch("/submit", {
         method: "POST",
