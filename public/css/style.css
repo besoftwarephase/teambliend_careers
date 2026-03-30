@@ -973,6 +973,10 @@ input::placeholder {
     .subtitle {
         font-size: 18px;
     }
+    #resume_file
+    {
+        width:100%
+    }
 
     .description {
         font-size: 11px;
