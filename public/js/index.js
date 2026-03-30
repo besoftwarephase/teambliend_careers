@@ -300,7 +300,7 @@ function validateStep2() {
 
     const qFields = [q_1, q_2, q_3];
     qFields.forEach(function (f) {
-        if (!f) return;
+        if (!f) return; /* skip if element not found in DOM */
         if (f.value.trim() === "") {
             f.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
@@ -326,10 +326,10 @@ function validateStep2() {
 function validateStep3() {
     let isValid = true;
 
-    /* ── Regular input/select fields (excludes work_location which is a div) ── */
-    const stepFields = [q_5, exp, q_6, q_7, q_9];
+    /* ── FIX: guard against null (element not found in DOM) ── */
+    const stepFields = [q_5, exp, work_location, q_6, q_7, q_9];
     stepFields.forEach(function (field) {
-        if (!field) return;
+        if (!field) return; /* skip if getElementById returned null */
         if (field.value.trim() === "") {
             field.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
@@ -344,17 +344,10 @@ function validateStep3() {
         isValid = false;
     }
 
-    /* WORK LOCATION — radio group (work_location is a div, not an input) */
-    const selectedRadio = document.querySelector('input[name="Perfered Work Location"]:checked');
-    if (!selectedRadio) {
-        if (work_location) {
-            work_location.style.setProperty("outline", "1px solid #ff4d4f", "important");
-        }
+    /* work_location radio/select — extra guard */
+    if (!work_location) {
+        console.warn("Element #work_location not found in the DOM");
         isValid = false;
-    } else {
-        if (work_location) {
-            work_location.style.outline = "none";
-        }
     }
 
     /* FILE VALIDATION */
@@ -413,7 +406,7 @@ function validateStep3() {
     fd.append("experience",      exp ? exp.value : "");
     fd.append("expected_salary", q_6 ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN") : "");
     fd.append("joining_date",    q_7 ? q_7.value : "");
-    fd.append("work_location",   selectedRadio ? selectedRadio.value : "");
+    fd.append("work_location",   work_location ? work_location.value : "");
     fd.append("resume",          q_8.files[0]);
     fd.append("message",         q_9 ? q_9.value : "");
 
