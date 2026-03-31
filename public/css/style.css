@@ -974,6 +974,23 @@ fieldset.cd-selected-field .legend_label {
     .cd-wrapper {
         width: 100%;
     }
+     #unsupported_browser_banner .ub-message
+    {
+        display: grid;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        justify-items: center;
+    }
+    #unsupported_browser_banner .ub-text {
+        color: #888888cc;
+        line-height: 1.5;
+        font-size: 12px;
+        /* margin-left: 94px; */
+        margin-top: 17px;
+        width: 100%;
+    }
 }
 
 /* ============================================================
@@ -1134,6 +1151,23 @@ fieldset.cd-selected-field .legend_label {
     .cd-wrapper {
         width: 100%;
     }
+    #unsupported_browser_banner .ub-message
+    {
+        display: grid;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        justify-items: center;
+    }
+    #unsupported_browser_banner .ub-text {
+    color: #888888cc;
+    line-height: 1.5;
+    font-size: 10px;
+    /* margin-left: 94px; */
+    margin-top: 17px;
+    width: 100%;
+}
 }
 
 /* ============================================================
@@ -1151,4 +1185,24 @@ fieldset.cd-selected-field .legend_label {
     .subtitle {
         font-size: 16px;
     }
+    #unsupported_browser_banner .ub-message
+    {
+        display: grid;
+        align-items: center;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        justify-items: center;
+    }
+    #unsupported_browser_banner .ub-text
+    {
+        color: #888888cc;
+        line-height: 1.5;
+        font-size: 10px;
+        /* margin-left: 94px; */
+        margin-top: 17px;
+        width: 100%;
+    }
+    
 }
