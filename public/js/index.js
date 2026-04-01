@@ -116,17 +116,16 @@ document.querySelectorAll(".highlight_text").forEach(function (field) {
 
         const container = this.closest(".input_field");
         if (container) {
-            const errorBox = container.querySelector(".error");
-            const errorText = container.querySelector(".error_messages");
-            const errorinline = container.querySelector(".s3-err-job_role_wrapper");
-            const errorexp = container.querySelector(".s3-err-exp_wrapper");
-            const errorsalary = contsiner.querySelector(".salary-err");
-            if (errorBox)  errorBox.style.display = "none";
-            if (errorText) errorText.innerText     = "";
-            if (errorinline) errorinline.innerText ="";
-            if (errorexp) errorinline.innerText ="";
-            if (errorsalary) errorsalary.innerText="";
-           
+            const errorBox      = container.querySelector(".error");
+            const errorText     = container.querySelector(".error_messages");
+            const errorinline   = container.querySelector(".s3-err-job_role_wrapper");
+            const errorexp      = container.querySelector(".s3-err-exp_wrapper");
+            const errorsalary   = container.querySelector(".salary-err"); // FIX 1: was "contsiner"
+            if (errorBox)    errorBox.style.display = "none";
+            if (errorText)   errorText.innerText    = "";
+            if (errorinline) errorinline.innerText  = "";
+            if (errorexp)    errorexp.innerText     = ""; // FIX 2: was "errorinline.innerText"
+            if (errorsalary) errorsalary.innerText  = "";
         }
     });
 
@@ -372,13 +371,13 @@ function validateStep3() {
     const joiningError    = document.getElementById("joining_date_error");
     if (!q_7 || !q_7.value.trim()) {
         q_7.style.setProperty("border-color", "#ff4d4f", "important");
-        joiningErrorBox.style.display = "block";
-        joiningError.textContent = "Please select your available date";
+        if (joiningErrorBox) joiningErrorBox.style.display = "block"; // FIX 3: added null-check
+        if (joiningError)    joiningError.textContent = "Please select your available date"; // FIX 3
         isValid = false;
     } else {
         q_7.style.removeProperty("border-color");
-        joiningErrorBox.style.display = "none";
-        joiningError.textContent = "";
+        if (joiningErrorBox) joiningErrorBox.style.display = "none"; // FIX 3
+        if (joiningError)    joiningError.textContent = ""; // FIX 3
     }
 
     // Work location (radio)
@@ -402,8 +401,8 @@ function validateStep3() {
         isValid = false;
     } else if (!q_8.files[0]) {
         q_8.style.setProperty("border-color", "#ff4d4f", "important");
-        resumeErrorBox.style.display = "block";
-        resumeError.textContent = "Please upload your resume";
+        if (resumeErrorBox) resumeErrorBox.style.display = "block"; // FIX 4: added null-check
+        if (resumeError)    resumeError.textContent = "Please upload your resume"; // FIX 4
         isValid = false;
     } else {
         const file             = q_8.files[0];
@@ -413,7 +412,7 @@ function validateStep3() {
         const fileExt          = file.name.toLowerCase().split(".").pop();
 
         q_8.style.removeProperty("border-color");
-        resumeErrorBox.style.display = "none";
+        if (resumeErrorBox) resumeErrorBox.style.display = "none"; // FIX 4
 
         if (!allowedTypes.includes(file.type) && !allowedExts.includes(fileExt)) {
             alert("Only PDF / DOC / DOCX files are allowed");
