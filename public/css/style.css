@@ -272,10 +272,11 @@ body {
 }
 
 .subtitle {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 500;
-    margin-bottom: -3px;
-    color: #ffffffc2;
+    margin-bottom: 6px;
+    color: #cccccc;
+    text-align: center;
 }
 
 .subtitle:hover {
