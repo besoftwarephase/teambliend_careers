@@ -18,23 +18,23 @@
     (function () {
         var unsupported = false;
 
-        // 1. Block Internet Explorer (IE 11 detection)
+        /* 1. Block Internet Explorer (IE 11 detection) */
         if (!!window.MSInputMethodContext && !!document.documentMode) {
             unsupported = true;
         }
 
-        // 2. Feature detection — things YOUR page actually uses
+        /* 2. Feature detection — things this page actually uses */
         var requiredFeatures =
-            typeof Promise !== 'undefined' &&        // ES6 Promises
-            typeof fetch !== 'undefined' &&          // Fetch API (form submission)
-            typeof CSS !== 'undefined' &&            // CSS object
-            CSS.supports('display', 'grid') &&       // CSS Grid (your layout)
-            typeof Symbol !== 'undefined' &&         // ES6 Symbol
-            typeof FileReader !== 'undefined';       // FileReader (resume upload)
+            typeof Promise    !== 'undefined' &&   /* ES6 Promises        */
+            typeof fetch      !== 'undefined' &&   /* Fetch API           */
+            typeof CSS        !== 'undefined' &&   /* CSS object          */
+            CSS.supports('display', 'grid')  &&   /* CSS Grid layout     */
+            typeof Symbol     !== 'undefined' &&   /* ES6 Symbol          */
+            typeof FileReader !== 'undefined';     /* FileReader (upload) */
 
         if (!requiredFeatures) unsupported = true;
 
-        // 3. Show banner after DOM is ready
+        /* 3. Show banner after DOM is ready */
         if (unsupported) {
             document.addEventListener('DOMContentLoaded', function () {
                 var banner = document.getElementById('unsupported_browser_banner');
@@ -45,527 +45,641 @@
     </script>
     <!-- ─── End Unsupported Browser Detection ─── -->
 </head>
+
 <body>
 
     <!-- ─── Unsupported Browser Banner ─── -->
-    <div id="unsupported_browser_banner">
+    <div id="unsupported_browser_banner" style="display:none;">
         <div class="ub-message">
-            <svg class="ub-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg class="ub-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
+                 fill="none" stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="9"  x2="12"    y2="13"/>
                 <line x1="12" y1="17" x2="12.01" y2="17"/>
             </svg>
             <span class="ub-text">
                 Your browser is outdated and may not display this page correctly.
                 Please upgrade to
-                <a href="https://www.google.com/chrome/" target="_blank" rel="noopener">Chrome</a>,
-                <a href="https://www.mozilla.org/firefox/" target="_blank" rel="noopener">Firefox</a>, or
-                <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener">Microsoft Edge</a>
+                <a href="https://www.google.com/chrome/" target="_blank" rel="noopener noreferrer">Chrome</a>,
+                <a href="https://www.mozilla.org/firefox/" target="_blank" rel="noopener noreferrer">Firefox</a>, or
+                <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener noreferrer">Microsoft Edge</a>
                 for the best experience.
             </span>
         </div>
-        <button class="ub-close" onclick="document.getElementById('unsupported_browser_banner').style.display='none'" title="Dismiss">&times;</button>
+        <button class="ub-close"
+                onclick="this.closest('#unsupported_browser_banner').style.display='none'"
+                aria-label="Dismiss browser warning">&times;</button>
     </div>
     <!-- ─── End Unsupported Browser Banner ─── -->
 
-<div class="page_wrapper">
-    <div class="spacer" style="width: 100%;height: 60px;margin-top:-30px"></div>
-    <div class="border-content" style="padding: 15px;border-radius: 22px;background: #44444403;">
+    <div class="page_wrapper">
+        <div class="spacer" style="width:100%;height:60px;margin-top:-30px;"></div>
+        <div class="border-content" style="padding:15px;border-radius:22px;background:#44444403;">
 
-        <!-- ====== MOBILE / TABLET TOPBAR ====== -->
-        <div class="mobile_topbar">
-            <div class="mobile_logo">
-                <img src="images/Bliend_w_logo_header.svg" alt="logo">
+            <!-- ====== MOBILE / TABLET TOPBAR ====== -->
+            <div class="mobile_topbar">
+                <div class="mobile_logo">
+                    <img src="images/Bliend_w_logo_header.svg" alt="Bliend logo">
+                </div>
+                <div class="mobile_profile_icon" id="mobile_profile_icon" title="Profile" aria-label="Profile"></div>
             </div>
-            <div class="mobile_profile_icon" id="mobile_profile_icon" title="Profile"></div>
-        </div>
 
-        <!-- ====== MOBILE STEP INDICATOR ====== -->
-        <div class="mobile_steps" id="mobile_steps">
-            <div class="mobile_step_item">
-                <span class="step_circles active" id="m_step1_circle">1</span>
-                <span class="mobile_step_label active" id="m_step1_label">Experience</span>
+            <!-- ====== MOBILE STEP INDICATOR ====== -->
+            <div class="mobile_steps" id="mobile_steps" aria-label="Form steps">
+                <div class="mobile_step_item">
+                    <span class="step_circles active" id="m_step1_circle" aria-current="step">1</span>
+                    <span class="mobile_step_label active" id="m_step1_label">Experience</span>
+                </div>
+                <div class="mobile_step_divider" aria-hidden="true"></div>
+                <div class="mobile_step_item">
+                    <span class="step_circles disabled" id="m_step2_circle">2</span>
+                    <span class="mobile_step_label" id="m_step2_label">Explore</span>
+                </div>
+                <div class="mobile_step_divider" aria-hidden="true"></div>
+                <div class="mobile_step_item">
+                    <span class="step_circles disabled" id="m_step3_circle">3</span>
+                    <span class="mobile_step_label" id="m_step3_label">Evolve</span>
+                </div>
             </div>
-            <div class="mobile_step_divider"></div>
-            <div class="mobile_step_item">
-                <span class="step_circles disabled" id="m_step2_circle">2</span>
-                <span class="mobile_step_label" id="m_step2_label">Explore</span>
-            </div>
-            <div class="mobile_step_divider"></div>
-            <div class="mobile_step_item">
-                <span class="step_circles disabled" id="m_step3_circle">3</span>
-                <span class="mobile_step_label" id="m_step3_label">Evolve</span>
-            </div>
-        </div>
 
-        <div class="page_content">
-            <div class="form-layout">
+            <div class="page_content">
+                <div class="form-layout">
 
-                <!-- SIDEBAR -->
-                <div class="menu_bar">
-                    <div class="logo_section" style="width: fit-content;margin: auto;">
-                        <img src="images/Bliend_w_logo_header.svg" alt="logo" id="logo">
-                    </div>
+                    <!-- ====== SIDEBAR ====== -->
+                    <aside class="menu_bar">
+                        <div class="logo_section" style="width:fit-content;margin:auto;">
+                            <img src="images/Bliend_w_logo_header.svg" alt="Bliend logo" id="logo">
+                        </div>
 
-                    <nav class="nav_section">
-                        <ul>
-                            <li>
-                                <span class="step_circles active">1</span>
-                                <p class="menu_list active">Experience</p>
-                            </li>
-                            <li>
-                                <span class="step_circles disabled">2</span>
-                                <p class="menu_list disabled">Explore</p>
-                            </li>
-                            <li>
-                                <span class="step_circles disabled">3</span>
-                                <p class="menu_list disabled">Evolve</p>
-                            </li>
-                        </ul>
-                    </nav>
+                        <nav class="nav_section" aria-label="Form progress">
+                            <ul role="list">
+                                <li>
+                                    <span class="step_circles active" aria-current="step">1</span>
+                                    <p class="menu_list active">Experience</p>
+                                </li>
+                                <li>
+                                    <span class="step_circles disabled">2</span>
+                                    <p class="menu_list disabled">Explore</p>
+                                </li>
+                                <li>
+                                    <span class="step_circles disabled">3</span>
+                                    <p class="menu_list disabled">Evolve</p>
+                                </li>
+                            </ul>
+                        </nav>
 
-                    <div class="footer_section">
-                        <div class="user_details">
-                            <div class="profile_img" id="profile_img"></div>
-                            <div class="marquee-wrapper">
-                                <span class="profile_email" id="profile_email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0c797f697e4c69746d617c6069226f6361"></a></span>
+                        <div class="footer_section">
+                            <div class="user_details">
+                                <div class="profile_img" id="profile_img" aria-hidden="true"></div>
+                                <div class="marquee-wrapper">
+                                    <span class="profile_email" id="profile_email"></span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </aside>
 
-                <!-- FORM SECTION -->
-                <div class="form_content">
+                    <!-- ====== FORM SECTION ====== -->
+                    <main class="form_content">
 
-                    <!-- ==================== STEP 1 ==================== -->
-                    <div class="step1_content" id="step1_content" style="display: block;">
-                        <h2 class="subtitle">Experience Your presence</h2>
-                        <p class="description"></p>
+                        <!-- ==================== STEP 1 ==================== -->
+                        <section class="step1_content" id="step1_content" aria-label="Step 1: Experience">
 
-                        <div class="field_groups">
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_name">
-                                    <legend class="legend_label">Full Name</legend>
-                                    <input type="text" id="name" autocomplete="off" placeholder="Enter your full name" oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')">
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
-                                    <p class="error_messages" id="name_error"></p>
+                            <h2 class="subtitle">Experience Your presence</h2>
+                            <p class="description"></p>
+
+                            <div class="field_groups">
+
+                                <!-- Full Name -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_name">
+                                        <legend class="legend_label">Full Name</legend>
+                                        <input type="text" id="name" name="name" autocomplete="name"
+                                               placeholder="Enter your full name"
+                                               oninput="this.value = this.value.replace(/[^a-zA-Z ]/g, '')">
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="name_error_box">
+                                        <span class="span_error_img">
+                                            <!-- <img src="images/icons8-info-error.png" alt=""> -->
+                                        </span>
+                                        <p class="error_messages" id="name_error"></p>
+                                    </div>
                                 </div>
+
+                                <!-- Age -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_dob">
+                                        <legend class="legend_label">Age</legend>
+                                        <input type="text" id="dob" name="age" autocomplete="off"
+                                               placeholder="How old are you?" maxlength="2"
+                                               inputmode="numeric"
+                                               oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)">
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="dob_error_box">
+                                        <p class="error_messages" id="dob_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Gender (custom dropdown) -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_gender">
+                                        <legend class="legend_label">Gender</legend>
+                                        <input type="hidden" id="gender" name="gender" value="">
+                                        <div class="cd-wrapper" id="gender_wrapper">
+                                            <div class="cd-trigger" id="gender_trigger"
+                                                 style="border:none;"
+                                                 onclick="cdToggle('gender')"
+                                                 role="combobox"
+                                                 aria-haspopup="listbox"
+                                                 aria-expanded="false"
+                                                 aria-controls="gender_menu"
+                                                 tabindex="0">
+                                                <span id="gender_label">Select Gender</span>
+                                                <svg class="cd-arrow" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                                    <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </div>
+                                            <div class="cd-menu" id="gender_menu" role="listbox" aria-label="Gender options">
+                                                <div class="cd-option" role="option" onclick="cdSelect('gender','Male','Male')">Male</div>
+                                                <div class="cd-option" role="option" onclick="cdSelect('gender','Female','Female')">Female</div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="gender_error_box">
+                                        <p class="error_messages" id="gender_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Email -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_email">
+                                        <legend class="legend_label">Email Address</legend>
+                                        <input type="email" id="email" name="email" autocomplete="email"
+                                               placeholder="Enter your email address">
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="email_error_box">
+                                        <p class="error_messages" id="email_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Phone -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_number">
+                                        <legend class="legend_label">Contact Number</legend>
+                                        <div class="phone_number_field">
+                                            <span class="country_code" aria-label="Country code">+91</span>
+                                            <input type="tel" id="phone" name="phone"
+                                                   autocomplete="tel-national"
+                                                   placeholder="Enter your phone number"
+                                                   inputmode="numeric"
+                                                   maxlength="15"
+                                                   oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                                                   style="margin-left:-9px !important;">
+                                        </div>
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="contact_error_box">
+                                        <p class="error_messages" id="contact_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Current Location -->
+                                <div class="input_field">
+                                    <fieldset class="highlight_text" id="fieldset_location">
+                                        <legend class="legend_label">Current Location</legend>
+                                        <input type="text" id="location" name="location"
+                                               autocomplete="address-level2"
+                                               placeholder="City/State">
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="location_error_box">
+                                        <p class="error_messages" id="location_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Describe Yourself -->
+                                <div class="input_field full_width">
+                                    <fieldset id="describe_field" class="highlight_text">
+                                        <legend class="legend_label">Describe Yourself</legend>
+                                        <textarea rows="3" id="describe" name="describe"
+                                                  style="border:none !important;"></textarea>
+                                    </fieldset>
+                                    <div class="error" style="margin-top:8px;display:none;" id="describe_error_box">
+                                        <p class="error_messages" id="describe_error"></p>
+                                    </div>
+                                </div>
+
+                            </div><!-- /.field_groups -->
+
+                            <div class="form_action">
+                                <!-- Hidden placeholder to keep layout consistent -->
+                                <button type="button" class="previous_btn" id="prevBtn"
+                                        style="background-color:gray;opacity:0;"
+                                        aria-hidden="true" tabindex="-1">Previous Step</button>
+                                <button type="button" class="next_btn" id="step1_next_btn"
+                                        onclick="validateStep1()">Next</button>
                             </div>
 
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_dob">
-                                    <legend class="legend_label">Age</legend>
-                                    <input type="text" id="dob" autocomplete="off" placeholder="How old are you?" maxlength="2" oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 2)">
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="dob_error"></p>
+                        </section>
+                        <!-- ==================== END STEP 1 ==================== -->
+
+
+                        <!-- ==================== STEP 2 ==================== -->
+                        <section class="step2_content" id="step2_content"
+                                 style="display:none;" aria-label="Step 2: Explore">
+
+                            <h2 class="subtitle">Explore Your untold abilities</h2>
+                            <p class="description"></p>
+
+                            <p style="color:#6b6868;width:100%;font-size:11px;font-style:italic;margin:0 0 20px;">
+                                Note: We're interested in how you think, not in perfect answers. Be specific and real.
+                            </p>
+
+                            <div class="field_groups">
+
+                                <div class="input_field full_width">
+                                    <label class="Questions" for="Question_1">
+                                        What are you becoming through the activities you engage in regularly?
+                                    </label>
+                                    <textarea class="expand_area highlight_text" id="Question_1"
+                                              name="q_1" rows="4"></textarea>
+                                    <div class="error" style="margin-top:6px;display:none;" id="q1_error_box">
+                                        <span class="span_error_img">
+                                            <img src="images/icons8-info-error.png" alt="">
+                                        </span>
+                                        <p class="error_messages" id="q1_error">This field is required</p>
+                                    </div>
                                 </div>
+
+                                <div class="input_field full_width">
+                                    <label class="Questions" for="Question_2">
+                                        Think about a situation, environment, or system you interact with regularly
+                                        (it can be digital, physical, or social). What is something most people
+                                        don't notice about it — but you have?
+                                    </label>
+                                    <textarea class="highlight_text" id="Question_2"
+                                              name="q_2" rows="4"></textarea>
+                                    <div class="error" style="margin-top:6px;display:none;" id="q2_error_box">
+                                        <span class="span_error_img">
+                                            <img src="images/icons8-info-error.png" alt="">
+                                        </span>
+                                        <p class="error_messages" id="q2_error">This field is required</p>
+                                    </div>
+                                </div>
+
+                                <div class="input_field full_width">
+                                    <label class="Questions" for="Question_3">
+                                        Explain what you observed, why it stood out to you, and how you interpreted it.
+                                    </label>
+                                    <textarea class="highlight_text" id="Question_3"
+                                              name="q_3" rows="4"></textarea>
+                                    <div class="error" style="margin-top:6px;display:none;" id="q3_error_box">
+                                        <span class="span_error_img">
+                                            <img src="images/icons8-info-error.png" alt="">
+                                        </span>
+                                        <p class="error_messages" id="q3_error">This field is required</p>
+                                    </div>
+                                </div>
+
+                            </div><!-- /.field_groups -->
+
+                            <div class="form_action_2">
+                                <button type="button" class="previous_btn" id="prevBtn2"
+                                        style="background-color:gray;">Go Back</button>
+                                <button type="button" class="next_btn" id="next_btn_2"
+                                        onclick="validateStep2()">Next</button>
                             </div>
 
-                            <!-- ─── CUSTOM GENDER DROPDOWN ─── -->
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_gender">
-                                    <legend class="legend_label">Gender</legend>
-                                    <input type="hidden" id="gender" value="">
-                                    <div class="cd-wrapper" id="gender_wrapper">
-                                        <div class="cd-trigger" id="gender_trigger" style="border: none;" onclick="cdToggle('gender')">
-                                            <span id="gender_label">Select Gender</span>
-                                            <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
+                        </section>
+                        <!-- ==================== END STEP 2 ==================== -->
+
+
+                        <!-- ==================== STEP 3 ==================== -->
+                        <section class="step3_content" id="step3_content"
+                                 style="display:none;" aria-label="Step 3: Evolve">
+
+                            <h2 class="subtitle">Evolve what you're ready for</h2>
+                            <p class="description"></p>
+
+                            <div class="field_groups">
+
+                                <!-- Preferred Role (custom dropdown) -->
+                                <div class="input_field">
+                                    <label class="Questions" id="job_role_label_text">Preferred Role / Area of Interest</label>
+                                    <input type="hidden" id="job_role" name="job_role" value="">
+                                    <div class="cd-wrapper highlight_text" id="job_role_wrapper"
+                                         style="border:1px solid #f5f5f542;border-radius:5px;padding:4px;"
+                                         role="combobox" aria-haspopup="listbox"
+                                         aria-labelledby="job_role_label_text">
+                                        <div class="cd-trigger" id="job_role_trigger"
+                                             onclick="cdToggle('job_role')"
+                                             aria-expanded="false"
+                                             aria-controls="job_role_menu"
+                                             tabindex="0">
+                                            <span id="job_role_label">Available Positions</span>
+                                            <svg class="cd-arrow" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                                                 <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                             </svg>
                                         </div>
-                                        <div class="cd-menu" id="gender_menu">
-                                            <div class="cd-option" onclick="cdSelect('gender','Male','Male')">Male</div>
-                                            <div class="cd-option" onclick="cdSelect('gender','Female','Female')">Female</div>
+                                        <div class="cd-menu" id="job_role_menu" role="listbox" aria-label="Available positions">
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','Business Development Executive','Business Development Executive (IT and Media)')">Business Development Executive</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','Full Stack Developer','Full Stack Developer')">Full Stack Developer</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','UI / UX Designer','UI / UX Designer')">UI / UX Designer</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','Content Writer','Content Writer')">Content Writer</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','Graphic Designer','Graphic Designer')">Graphic Designer</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('job_role','Motion Graphic / 3D Designer','Motion Graphic / 3D Designer')">Motion Graphic / 3D Designer</div>
                                         </div>
                                     </div>
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="gender_error"></p>
-                                </div>
-                            </div>
-                            <!-- ─── END CUSTOM GENDER DROPDOWN ─── -->
-
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_email">
-                                    <legend class="legend_label">Email Address</legend>
-                                    <input type="email" id="email" autocomplete="off" placeholder="Enter your email address">
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="email_error"></p>
-                                </div>
-                            </div>
-
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_number">
-                                    <legend class="legend_label">Contact Number</legend>
-                                    <div class="phone_number_field">
-                                        <span class="country_code">+91</span>
-                                        <input type="tel" id="phone" name="phone" autocomplete="off"
-                                            placeholder="Enter your phone number"
-                                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                                            style="margin-left: -9px !important;" required>
-                                    </div>
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="contact_error"></p>
-                                </div>
-                            </div>
-
-                            <div class="input_field">
-                                <fieldset class="highlight_text" id="fieldset_location">
-                                    <legend class="legend_label">Current Location</legend>
-                                    <input type="text" id="location" autocomplete="off" placeholder="City/State">
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="location_error"></p>
-                                </div>
-                            </div>
-
-                            <div class="input_field full_width">
-                                <fieldset id="describe_field" class="highlight_text">
-                                    <legend class="legend_label">Describe Yourself</legend>
-                                    <textarea rows="3" id="describe" style="border: none !important;"></textarea>
-                                </fieldset>
-                                <div class="error" style="margin-top: 8px;display: none;">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="describe_error"></p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form_action">
-                            <button type="button" class="previous_btn" id="prevBtn" style="background-color: gray;opacity:0">Previous Step</button>
-                            <button type="button" class="next_btn" id="step1_next_btn" onclick="validateStep1()">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- ==================== STEP 2 ==================== -->
-                    <div class="step2_content" id="step2_content" style="display: none;">
-                        <h2 class="subtitle">Explore Your untold abilities</h2>
-                        <p class="description"></p>
-
-                        <p style="color: #6b6868;width: 100%;font-size: 11px;font-style: italic;color: #6b6868;margin: 0px 0px 20px 0px;">Note: We're interested to explore in how you think, not in perfect answers. Be specific and real</p>
-                        <div class="field_groups">
-
-                            <div class="input_field full_width">
-                                <p class="Questions">What are you becoming through the activities you engage in regularly?</p>
-                                <textarea class="expand_area highlight_text" id="Question_1" rows="4"></textarea>
-                                <div class="error" style="margin-top: 6px;display: none;">
-                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
-                                    <p class="error_messages" id="q1_error">This field is required</p>
-                                </div>
-                            </div>
-
-                            <div class="input_field full_width">
-                                <p class="Questions">Think about a situation, environment, or system you interact with regularly (it can be digital, physical, or social). What is something most people don't notice about it—but you have?</p>
-                                <textarea rows="4" id="Question_2" class="highlight_text"></textarea>
-                                <div class="error" style="margin-top: 6px;display: none;">
-                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
-                                    <p class="error_messages" id="q2_error">This field is required</p>
-                                </div>
-                            </div>
-
-                            <div class="input_field full_width">
-                                <p class="Questions">Explain what you observed, why it stood out to you, and how you interpreted it?</p>
-                                <textarea rows="4" id="Question_3" class="highlight_text"></textarea>
-                                <div class="error" style="margin-top: 6px;display: none;">
-                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
-                                    <p class="error_messages" id="q3_error">This field is required</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form_action_2">
-                            <button type="button" class="previous_btn" id="prevBtn2" style="background-color: gray;">Go Back</button>
-                            <button type="button" class="next_btn" id="next_btn_2" onclick="validateStep2()">Next</button>
-                        </div>
-                    </div>
-
-                    <!-- ==================== STEP 3 ==================== -->
-                    <div class="step3_content" id="step3_content" style="display: none;">
-                        <h2 class="subtitle">Evolve what you're ready for</h2>
-                        <p class="description"> </p>
-
-                        <div class="field_groups">
-
-                            <!-- ─── CUSTOM JOB ROLE DROPDOWN ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Preferred Role / Area of Interest</p>
-                                <input type="hidden" id="job_role" name="job_role" value="">
-                                <div class="cd-wrapper highlight_text" id="job_role_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
-                                    <div class="cd-trigger" id="job_role_trigger" onclick="cdToggle('job_role')">
-                                        <span id="job_role_label">Available Positions</span>
-                                        <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
-                                            <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
-                                    </div>
-                                    <div class="cd-menu" id="job_role_menu">
-                                        <div class="cd-option" onclick="cdSelect('job_role','Business Development Executive','Business Developement Executive (IT and Media)')">Business Development Executive</div>
-                                        <div class="cd-option" onclick="cdSelect('job_role','Full Stack Developer','Full Stack Developer')">Full Stack Developer</div>
-                                        <div class="cd-option" onclick="cdSelect('job_role','UI / UX Designer','UI / UX Designer')">UI / UX Designer</div>
-                                        <div class="cd-option" onclick="cdSelect('job_role','Content Writer','Content Writer')">Content Writer</div>
-                                        <div class="cd-option" onclick="cdSelect('job_role','Graphic Designer','Graphic Designer')">Graphic Designer</div>
-                                        <div class="cd-option" onclick="cdSelect('job_role','Motion Graphic/3D Designer','Motion Graphic/3D Designer')">Motion Graphic/3D Designer</div>
+                                    <div class="error" style="margin-top:6px;display:none;" id="job_role_error_box">
+                                        <span class="span_error_img">
+                                            <img src="images/icons8-info-error.png" alt="">
+                                        </span>
+                                        <p class="error_messages" id="job_role_error"></p>
                                     </div>
                                 </div>
-                                <div class="error" style="margin-top: 6px;display: none;" id="job_role_error_box">
-                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
-                                    <p class="error_messages" id="job_role_error"></p>
-                                </div>
-                            </div>
-                            <!-- ─── END CUSTOM JOB ROLE DROPDOWN ─── -->
 
-                            <!-- ─── CUSTOM EXPERIENCE DROPDOWN ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Work Experience</p>
-                                <input type="hidden" id="exp" name="experience" value="">
-                                <div class="cd-wrapper highlight_text" id="exp_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
-                                    <div class="cd-trigger" id="exp_trigger" onclick="cdToggle('exp')">
-                                        <span id="exp_label">Years Of Experience</span>
-                                        <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
-                                            <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
+                                <!-- Work Experience (custom dropdown) -->
+                                <div class="input_field">
+                                    <label class="Questions" id="exp_label_text">Work Experience</label>
+                                    <input type="hidden" id="exp" name="experience" value="">
+                                    <div class="cd-wrapper highlight_text" id="exp_wrapper"
+                                         style="border:1px solid #f5f5f542;border-radius:5px;padding:4px;"
+                                         role="combobox" aria-haspopup="listbox"
+                                         aria-labelledby="exp_label_text">
+                                        <div class="cd-trigger" id="exp_trigger"
+                                             onclick="cdToggle('exp')"
+                                             aria-expanded="false"
+                                             aria-controls="exp_menu"
+                                             tabindex="0">
+                                            <span id="exp_label">Years of Experience</span>
+                                            <svg class="cd-arrow" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                                                <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                            </svg>
+                                        </div>
+                                        <div class="cd-menu" id="exp_menu" role="listbox" aria-label="Years of experience">
+                                            <div class="cd-option" role="option" onclick="cdSelect('exp','Fresher','Fresher')">Fresher</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('exp','1+ years','1+ years')">1+ years</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('exp','3+ years','3+ years')">3+ years</div>
+                                            <div class="cd-option" role="option" onclick="cdSelect('exp','5+ years','5+ years')">5+ years</div>
+                                        </div>
                                     </div>
-                                    <div class="cd-menu" id="exp_menu">
-                                        <div class="cd-option" onclick="cdSelect('exp','Fresher','Fresher')">Fresher</div>
-                                        <div class="cd-option" onclick="cdSelect('exp','1+ years','1+ years')">1+ years</div>
-                                        <div class="cd-option" onclick="cdSelect('exp','3+ years','3+ years')">3+ years</div>
-                                        <div class="cd-option" onclick="cdSelect('exp','5+ years','5+ years')">5+ years</div>
+                                    <div class="error" style="margin-top:6px;display:none;" id="exp_error_box">
+                                        <p class="error_messages" id="exp_error"></p>
                                     </div>
                                 </div>
-                                <div class="error" style="margin-top: 6px;display: none;" id="exp_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="exp_error"></p>
-                                </div>
-                            </div>
-                            <!-- ─── END CUSTOM EXPERIENCE DROPDOWN ─── -->
 
-                            <!-- ─── SALARY ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Expected Salary</p>
-                                <div class="salary highlight_text" id="salary_wrapper" style="display:flex;align-items:center;border:1px solid #f5f5f542 !important;border-radius:5px;overflow:hidden;width:98%;padding:2px">
-                                    <span class="currency" style="padding:8px 12px;color:#f5f5f542;font-weight:bold;background:transparent;white-space:nowrap;font-size:13px;line-height:normal;position:static;margin:0;width:auto;">₹</span>
-                                    <input type="number" class="highlight_text" id="salary" name="salary" placeholder="75,000"
-                                        min="1" max="99999" oninput="this.value = this.value.slice(0, 5)"
-                                        style="border:none !important;outline:none;flex:1;padding:8px 12px;background:transparent;color:#fff;width:100%;">
-                                    <span style="padding:8px 12px;color:#ffffff90;font-size:8px;white-space:nowrap;border-left:1px solid #f5f5f542;background:transparent;">Per month</span>
+                                <!-- Expected Salary -->
+                                <div class="input_field">
+                                    <label class="Questions" for="salary">Expected Salary</label>
+                                    <div class="salary highlight_text" id="salary_wrapper"
+                                         style="display:flex;align-items:center;border:1px solid #f5f5f542 !important;border-radius:5px;overflow:hidden;width:98%;padding:2px;">
+                                        <span class="currency" aria-label="Indian Rupee"
+                                              style="padding:8px 12px;color:#f5f5f542;font-weight:bold;background:transparent;white-space:nowrap;font-size:13px;">₹</span>
+                                        <input type="number" class="highlight_text" id="salary" name="salary"
+                                               placeholder="75,000" min="1" max="99999"
+                                               inputmode="numeric"
+                                               oninput="this.value = this.value.slice(0, 5)"
+                                               style="border:none !important;outline:none;flex:1;padding:8px 12px;background:transparent;color:#fff;width:100%;">
+                                        <span aria-label="Per month"
+                                              style="padding:8px 12px;color:#ffffff90;font-size:8px;white-space:nowrap;border-left:1px solid #f5f5f542;background:transparent;">Per month</span>
+                                    </div>
+                                    <div class="error" style="margin-top:6px;display:none;" id="salary_error_box">
+                                        <p class="error_messages" id="salary_error"></p>
+                                    </div>
                                 </div>
-                                <div class="error" style="margin-top: 6px;display: none;" id="salary_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="salary_error"></p>
-                                </div>
-                            </div>
 
-                            <!-- ─── JOINING DATE ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Available to join date?</p>
-                                <input type="text" class="highlight_text" id="joining_date"
-                                    style="border:1px solid #f5f5f542 !important;border-radius:5px !important;"
-                                    placeholder="DD/MM/YYYY">
-                                <div class="error" style="margin-top: 6px;display: none;" id="joining_date_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="joining_date_error"></p>
+                                <!-- Joining Date -->
+                                <div class="input_field">
+                                    <label class="Questions" for="joining_date">Available to join date?</label>
+                                    <input type="text" class="highlight_text" id="joining_date" name="joining_date"
+                                           style="border:1px solid #f5f5f542 !important;border-radius:5px !important;"
+                                           placeholder="DD/MM/YYYY"
+                                           autocomplete="off"
+                                           readonly>
+                                    <div class="error" style="margin-top:6px;display:none;" id="joining_date_error_box">
+                                        <p class="error_messages" id="joining_date_error"></p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- ─── RESUME ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Upload your resume (PDF, Docs)</p>
-                                <input type="file" class="highlight_text" id="resume_file"
-                                    style="border:1px solid #f5f5f542 !important;border-radius:5px !important;color:#888888cc;"
-                                    accept=".pdf, .doc, .docx, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
-                                <div class="error" style="margin-top: 6px;display: none;" id="resume_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="resume_error"></p>
+                                <!-- Resume Upload -->
+                                <div class="input_field">
+                                    <label class="Questions" for="resume_file">Upload your resume (PDF, DOC, DOCX — max 5 MB)</label>
+                                    <input type="file" class="highlight_text" id="resume_file" name="resume"
+                                           style="border:1px solid #f5f5f542 !important;border-radius:5px !important;color:#888888cc;"
+                                           accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document">
+                                    <div class="error" style="margin-top:6px;display:none;" id="resume_error_box">
+                                        <p class="error_messages" id="resume_error"></p>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <!-- ─── WORK LOCATION ─── -->
-                            <div class="input_field">
-                                <p class="Questions">Preferred Work Location</p>
-                                <div class="radio_group highlight_text" id="work_location">
-                                    <label class="radio_option">
-                                        <input type="radio" name="Work_Location" value="Chennai (On-site/Full-Time)" required>
-                                        <span>Chennai (On-site/Full-Time)</span>
+                                <!-- Preferred Work Location -->
+                                <div class="input_field">
+                                    <p class="Questions" id="work_location_legend">Preferred Work Location</p>
+                                    <div class="radio_group" id="radio_btn" role="group" aria-labelledby="work_location_legend">
+                                        <label class="radio_option">
+                                            <input type="radio" name="Work_Location" value="Chennai (On-site/Full-Time)">
+                                            <span>Chennai (On-site / Full-Time)</span>
+                                        </label>
+                                        <label class="radio_option">
+                                            <input type="radio" name="Work_Location" value="Bangalore (Hybrid/On-site/Full-Time)">
+                                            <span>Bangalore (Hybrid / On-site / Full-Time)</span>
+                                        </label>
+                                    </div>
+                                    <div class="error" style="margin-top:6px;display:none;" id="work_location_error_box">
+                                        <p class="error_messages" id="work_location_error"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Additional Information -->
+                                <div class="input_field full_width">
+                                    <label class="Questions" for="addition">
+                                        Additional information (Why do you want to join us?)
                                     </label>
-                                    <label class="radio_option">
-                                        <input type="radio" name="Work_Location" value="Bangalore (Hybrid/On-site/Full-Time)">
-                                        <span>Bangalore (Hybrid/On-site/Full-Time)</span>
-                                    </label>
+                                    <textarea class="expand_area highlight_text" id="addition"
+                                              name="addition" rows="4"></textarea>
+                                    <div class="error" style="margin-top:6px;display:none;" id="addition_error_box">
+                                        <p class="error_messages" id="addition_error"></p>
+                                    </div>
                                 </div>
-                                <div class="error" style="margin-top: 6px;display: none;" id="work_location_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="work_location_error"></p>
-                                </div>
+
+                            </div><!-- /.field_groups -->
+
+                            <div class="form_action_2">
+                                <button type="button" class="previous_btn" id="prevBtn3"
+                                        style="background-color:gray;">Go Back</button>
+                                <button type="button" class="submit_btn" id="submit_btn"
+                                        onclick="validateStep3()">Submit</button>
                             </div>
 
-                            <!-- ─── ADDITIONAL INFO ─── -->
-                            <div class="input_field full_width">
-                                <p class="Questions">Additional information (Why do you want to join us?)</p>
-                                <textarea class="expand_area highlight_text" id="addition" rows="4"></textarea>
-                                <div class="error" style="margin-top: 6px;display: none;" id="addition_error_box">
-                                    <!-- <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span> -->
-                                    <p class="error_messages" id="addition_error"></p>
-                                </div>
-                            </div>
+                        </section>
+                        <!-- ==================== END STEP 3 ==================== -->
 
-                        </div>
-
-                        <div class="form_action_2">
-                            <button type="button" class="previous_btn" id="prevBtn3" style="background-color: gray;">Go Back</button>
-                            <button type="button" class="submit_btn" id="submit_btn" onclick="validateStep3()">Submit</button>
-                        </div>
-                    </div>
-
+                    </main>
                 </div>
             </div>
         </div>
-    </div>
 
-    <footer class="footer">
-        © 2026 Powered by Bliend All Rights Reserved
-    </footer>
-    <div class="spacer" style="width: 100%;height: 60px;"></div>
-</div>
+        <footer class="footer">
+            <p>&copy; 2026 Powered by Bliend. All Rights Reserved.</p>
+        </footer>
+        <div class="spacer" style="width:100%;height:60px;"></div>
+    </div><!-- /.page_wrapper -->
 
-<!-- MODAL -->
-<div id="myModal" class="modal">
-    <span class="close" id="closemodal">&times;</span>
-    <div class="modal-content">
-        <div class="loader-container">
-            <svg id="step-loader-b" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                viewBox="0 0 40 40" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" overflow="visible">
-                <style>
-                    <![CDATA[
-                    #step-loader-b-u-s1_to { animation: step-loader-b-u-s1_to__to 1000ms linear infinite normal forwards }
-                    @keyframes step-loader-b-u-s1_to__to { 0% { transform: translate(26.82px,10.7px) } 100% { transform: translate(20.000001px,19.999999px) } }
-                    #step-loader-b-u-s2_to { animation: step-loader-b-u-s2_to__to 1000ms linear infinite normal forwards }
-                    @keyframes step-loader-b-u-s2_to__to { 0% { transform: translate(20.005001px,19.999999px) } 100% { transform: translate(13.185001px,29.299999px) } }
-                    #step-loader-b-u-s3_to { animation: step-loader-b-u-s3_to__to 1000ms linear infinite normal forwards }
-                    @keyframes step-loader-b-u-s3_to__to { 0% { offset-distance: 0% } 30% { offset-distance: 6.585263%; animation-timing-function: cubic-bezier(0,0.22,0.995,0.465) } 100% { offset-distance: 100% } }
-                    #step-loader-b-u-s3_tr { animation: step-loader-b-u-s3_tr__tr 1000ms linear infinite normal forwards }
-                    @keyframes step-loader-b-u-s3_tr__tr { 0% { transform: rotate(0deg) } 30% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0,0.72,0.98,0.665) } 100% { transform: rotate(180.000004deg) } }
-                    ]]>
-                </style>
-                <g id="step-loader-b-u-s1_to" transform="translate(26.82,10.7)">
-                    <path id="step-loader-b-u-s1" d="M13.77,13.42v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.98c-.58,0-1.06-.47-1.06-1.05v0Z" transform="translate(-26.82,-10.7)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
-                </g>
-                <g id="step-loader-b-u-s2_to" transform="translate(20.005001,19.999999)">
-                    <path id="step-loader-b-u-s2" d="M6.96,22.72v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.99c-.58,0-1.06-.47-1.06-1.05v0Z" transform="translate(-20.005001,-19.999999)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
-                </g>
-                <g id="step-loader-b-u-s3_to" style="offset-path:path('M13.185,29.3Q13.185,29.3,9.291856,32.032191C-22.575371,33.075006,-11.821489,-3.050328,26.805,10.725793');offset-rotate:0deg">
-                    <g id="step-loader-b-u-s3_tr" transform="rotate(0)">
-                        <path id="step-loader-b-u-s3" d="M0.14,32.02v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.99c-.58,0-1.06-.47-1.06-1.05h.01Z" transform="translate(-13.185,-29.3)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
+
+    <!-- ====== LOADER MODAL ====== -->
+    <div id="myModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="loaderText">
+        <button class="close" id="closemodal" aria-label="Close">&times;</button>
+        <div class="modal-content">
+            <div class="loader-container">
+                <svg id="step-loader-b" xmlns="http://www.w3.org/2000/svg"
+                     viewBox="0 0 40 40" shape-rendering="geometricPrecision"
+                     text-rendering="geometricPrecision" overflow="visible"
+                     aria-hidden="true">
+                    <style>
+                        #step-loader-b-u-s1_to { animation: step-loader-b-u-s1_to__to 1000ms linear infinite normal forwards }
+                        @keyframes step-loader-b-u-s1_to__to { 0% { transform: translate(26.82px,10.7px) } 100% { transform: translate(20.000001px,19.999999px) } }
+                        #step-loader-b-u-s2_to { animation: step-loader-b-u-s2_to__to 1000ms linear infinite normal forwards }
+                        @keyframes step-loader-b-u-s2_to__to { 0% { transform: translate(20.005001px,19.999999px) } 100% { transform: translate(13.185001px,29.299999px) } }
+                        #step-loader-b-u-s3_to { animation: step-loader-b-u-s3_to__to 1000ms linear infinite normal forwards }
+                        @keyframes step-loader-b-u-s3_to__to { 0% { offset-distance: 0% } 30% { offset-distance: 6.585263%; animation-timing-function: cubic-bezier(0,0.22,0.995,0.465) } 100% { offset-distance: 100% } }
+                        #step-loader-b-u-s3_tr { animation: step-loader-b-u-s3_tr__tr 1000ms linear infinite normal forwards }
+                        @keyframes step-loader-b-u-s3_tr__tr { 0% { transform: rotate(0deg) } 30% { transform: rotate(0deg); animation-timing-function: cubic-bezier(0,0.72,0.98,0.665) } 100% { transform: rotate(180.000004deg) } }
+                    </style>
+                    <g id="step-loader-b-u-s1_to" transform="translate(26.82,10.7)">
+                        <path id="step-loader-b-u-s1" d="M13.77,13.42v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.98c-.58,0-1.06-.47-1.06-1.05v0Z" transform="translate(-26.82,-10.7)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
                     </g>
-                </g>
-            </svg>
+                    <g id="step-loader-b-u-s2_to" transform="translate(20.005001,19.999999)">
+                        <path id="step-loader-b-u-s2" d="M6.96,22.72v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.99c-.58,0-1.06-.47-1.06-1.05v0Z" transform="translate(-20.005001,-19.999999)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
+                    </g>
+                    <g id="step-loader-b-u-s3_to" style="offset-path:path('M13.185,29.3Q13.185,29.3,9.291856,32.032191C-22.575371,33.075006,-11.821489,-3.050328,26.805,10.725793');offset-rotate:0deg">
+                        <g id="step-loader-b-u-s3_tr" transform="rotate(0)">
+                            <path id="step-loader-b-u-s3" d="M0.14,32.02v-5.44c0-.58.47-1.05,1.06-1.05h23.98c.58,0,1.06.47,1.06,1.05v5.44c0,.58-.47,1.05-1.06,1.05h-23.99c-.58,0-1.06-.47-1.06-1.05h.01Z" transform="translate(-13.185,-29.3)" fill="#888888b0" fill-rule="evenodd" stroke-width="0"/>
+                        </g>
+                    </g>
+                </svg>
+            </div>
+            <p id="loaderText" style="margin-top:80px;font-size:12px;font-weight:200;letter-spacing:1px;color:#ffffff75;">
+                Processing your application…
+            </p>
         </div>
-        <p id="loaderText" style="margin-top:80px;font-size:12px;font-weight:200;letter-spacing:1px;color:#ffffff75;">Processing your resume document...</p>
     </div>
-</div>
+    <!-- ====== END LOADER MODAL ====== -->
 
-<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
-<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
-<script src="js/index.js"></script>
 
-<!-- ─── Custom Dropdown JS ─── -->
-<script>
-function cdGetTarget(id) {
-    var wrapper = document.getElementById(id + '_wrapper');
-    if (!wrapper) return null;
-    var fs = wrapper.closest('fieldset.highlight_text');
-    return fs ? fs : wrapper;
-}
+    <!-- ====== SCRIPTS ====== -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script src="js/index.js"></script>
 
-function cdFieldFocusIn(id) {
-    var target = cdGetTarget(id);
-    if (!target) return;
-    target.classList.add('active-field');
-    target.classList.add('active-text');
-    target.style.borderColor = 'unset';
-    var container = target.closest('.input_field');
-    if (container) {
-        var errorBox = container.querySelector('.error');
-        if (errorBox) errorBox.style.display = 'none';
-        var errorText = container.querySelector('.error_messages');
-        if (errorText) errorText.innerText = '';
+    <!-- ─── Custom Dropdown JS ─── -->
+    <script>
+    function cdGetTarget(id) {
+        var wrapper = document.getElementById(id + '_wrapper');
+        if (!wrapper) return null;
+        var fs = wrapper.closest('fieldset.highlight_text');
+        return fs ? fs : wrapper;
     }
-}
 
-function cdFieldFocusOut(id) {
-    var target = cdGetTarget(id);
-    if (!target) return;
-    target.classList.remove('active-field');
-    target.classList.add('active-text');
-}
-
-function cdToggle(id) {
-    var trigger = document.getElementById(id + '_trigger');
-    var menu    = document.getElementById(id + '_menu');
-    var isOpen  = menu.classList.contains('cd-open');
-
-    document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
-        var openId = m.id.replace('_menu', '');
-        cdFieldFocusOut(openId);
-        m.classList.remove('cd-open');
-    });
-    document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) {
-        t.classList.remove('cd-open');
-    });
-
-    if (!isOpen) {
-        trigger.classList.add('cd-open');
-        menu.classList.add('cd-open');
-        cdFieldFocusIn(id);
+    function cdFieldFocusIn(id) {
+        var target = cdGetTarget(id);
+        if (!target) return;
+        target.classList.add('active-field', 'active-text');
+        target.style.borderColor = 'unset';
+        var container = target.closest('.input_field');
+        if (container) {
+            var errorBox  = container.querySelector('.error');
+            var errorText = container.querySelector('.error_messages');
+            if (errorBox)  errorBox.style.display = 'none';
+            if (errorText) errorText.innerText = '';
+        }
     }
-}
 
-function cdSelect(id, label, value) {
-    document.getElementById(id + '_label').textContent = label;
-    document.getElementById(id).value = value;
-    var trigger = document.getElementById(id + '_trigger');
-    trigger.classList.add('cd-selected');
-    trigger.classList.remove('cd-open');
-    document.getElementById(id + '_menu').classList.remove('cd-open');
-    document.querySelectorAll('#' + id + '_menu .cd-option').forEach(function(o) {
-        o.classList.toggle('cd-active', o.textContent.trim() === label);
-    });
-    cdFieldFocusOut(id);
+    function cdFieldFocusOut(id) {
+        var target = cdGetTarget(id);
+        if (!target) return;
+        target.classList.remove('active-field');
+        target.classList.add('active-text');
+    }
 
-    /* ── Clear error on selection ── */
-    var errorBoxId = id + '_error_box';
-    var errorMsgId = id + '_error';
-    var errorBox   = document.getElementById(errorBoxId);
-    var errorMsg   = document.getElementById(errorMsgId);
-    var wrapper    = document.getElementById(id + '_wrapper');
-    if (errorBox) errorBox.style.display = 'none';
-    if (errorMsg) errorMsg.innerText = '';
-    if (wrapper)  wrapper.style.removeProperty('border-color');
-}
+    function cdToggle(id) {
+        var trigger = document.getElementById(id + '_trigger');
+        var menu    = document.getElementById(id + '_menu');
+        var isOpen  = menu.classList.contains('cd-open');
 
-document.addEventListener('click', function(e) {
-    if (!e.target.closest('.cd-wrapper')) {
-        document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
-            var openId = m.id.replace('_menu', '');
-            cdFieldFocusOut(openId);
+        /* Close all other open dropdowns */
+        document.querySelectorAll('.cd-menu.cd-open').forEach(function (m) {
+            cdFieldFocusOut(m.id.replace('_menu', ''));
             m.classList.remove('cd-open');
         });
-        document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) {
+        document.querySelectorAll('.cd-trigger.cd-open').forEach(function (t) {
             t.classList.remove('cd-open');
+            t.setAttribute('aria-expanded', 'false');
         });
+
+        if (!isOpen) {
+            trigger.classList.add('cd-open');
+            trigger.setAttribute('aria-expanded', 'true');
+            menu.classList.add('cd-open');
+            cdFieldFocusIn(id);
+        }
     }
-});
-</script>
-<!-- ─── End Custom Dropdown JS ─── -->
+
+    function cdSelect(id, label, value) {
+        document.getElementById(id + '_label').textContent = label;
+        document.getElementById(id).value = value;
+
+        var trigger = document.getElementById(id + '_trigger');
+        trigger.classList.add('cd-selected');
+        trigger.classList.remove('cd-open');
+        trigger.setAttribute('aria-expanded', 'false');
+
+        document.getElementById(id + '_menu').classList.remove('cd-open');
+
+        document.querySelectorAll('#' + id + '_menu .cd-option').forEach(function (o) {
+            o.classList.toggle('cd-active', o.textContent.trim() === label);
+            o.setAttribute('aria-selected', o.textContent.trim() === label ? 'true' : 'false');
+        });
+
+        cdFieldFocusOut(id);
+
+        /* Clear validation error on selection */
+        var errorBox = document.getElementById(id + '_error_box');
+        var errorMsg = document.getElementById(id + '_error');
+        var wrapper  = document.getElementById(id + '_wrapper');
+        if (errorBox) errorBox.style.display = 'none';
+        if (errorMsg) errorMsg.innerText = '';
+        if (wrapper)  wrapper.style.removeProperty('border-color');
+    }
+
+    /* Close dropdowns when clicking outside */
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.cd-wrapper')) {
+            document.querySelectorAll('.cd-menu.cd-open').forEach(function (m) {
+                cdFieldFocusOut(m.id.replace('_menu', ''));
+                m.classList.remove('cd-open');
+            });
+            document.querySelectorAll('.cd-trigger.cd-open').forEach(function (t) {
+                t.classList.remove('cd-open');
+                t.setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    /* Keyboard support for custom dropdowns */
+    document.querySelectorAll('.cd-trigger').forEach(function (trigger) {
+        trigger.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                trigger.click();
+            } else if (e.key === 'Escape') {
+                var id = trigger.id.replace('_trigger', '');
+                document.getElementById(id + '_menu').classList.remove('cd-open');
+                trigger.classList.remove('cd-open');
+                trigger.setAttribute('aria-expanded', 'false');
+                cdFieldFocusOut(id);
+            }
+        });
+    });
+    </script>
+    <!-- ─── End Custom Dropdown JS ─── -->
 
 </body>
 </html>
