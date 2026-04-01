@@ -794,7 +794,7 @@ html .ui-button.ui-state-disabled:active {
     width: 100%;
     padding: 9px 12px;
     background: #000;
-    border: 1px solid #f5f5f542;
+    
     border-radius: 5px;
     cursor: pointer;
     display: flex;
