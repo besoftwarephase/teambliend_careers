@@ -50,7 +50,6 @@
     <!-- ─── Unsupported Browser Banner ─── -->
     <div id="unsupported_browser_banner">
         <div class="ub-message">
-            <!-- Inline warning SVG — no external image dependency -->
             <svg class="ub-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
                 <line x1="12" y1="9" x2="12" y2="13"/>
@@ -138,7 +137,7 @@
                 <!-- FORM SECTION -->
                 <div class="form_content">
 
-                    <!-- STEP 1 -->
+                    <!-- ==================== STEP 1 ==================== -->
                     <div class="step1_content" id="step1_content" style="display: block;">
                         <h2 class="subtitle">Experience Your presence</h2>
                         <p class="description"></p>
@@ -171,7 +170,7 @@
                                 <fieldset class="highlight_text" id="fieldset_gender">
                                     <legend class="legend_label">Gender</legend>
                                     <input type="hidden" id="gender" value="">
-                                    <div class="cd-wrapper" id="gender_wrapper" >
+                                    <div class="cd-wrapper" id="gender_wrapper">
                                         <div class="cd-trigger" id="gender_trigger" style="border: none;" onclick="cdToggle('gender')">
                                             <span id="gender_label">Select Gender</span>
                                             <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
@@ -235,6 +234,10 @@
                                     <legend class="legend_label">Describe Yourself</legend>
                                     <textarea rows="3" id="describe" style="border: none !important;"></textarea>
                                 </fieldset>
+                                <div class="error" style="margin-top: 8px;display: none;">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="describe_error"></p>
+                                </div>
                             </div>
                         </div>
 
@@ -244,26 +247,39 @@
                         </div>
                     </div>
 
-                    <!-- STEP 2 -->
+                    <!-- ==================== STEP 2 ==================== -->
                     <div class="step2_content" id="step2_content" style="display: none;">
                         <h2 class="subtitle">Explore Your untold abilities</h2>
                         <p class="description"></p>
 
-                        <p style="color: #6b6868;width: 100%;font-size: 11px;font-style: italic;color: #6b6868;margin: 0px 0px 20px 0px;">Note: We’re interested to explore in how you think, not in perfect answers. Be specific and real</p>
+                        <p style="color: #6b6868;width: 100%;font-size: 11px;font-style: italic;color: #6b6868;margin: 0px 0px 20px 0px;">Note: We're interested to explore in how you think, not in perfect answers. Be specific and real</p>
                         <div class="field_groups">
-                           
+
                             <div class="input_field full_width">
                                 <p class="Questions">What are you becoming through the activities you engage in regularly?</p>
                                 <textarea class="expand_area highlight_text" id="Question_1" rows="4"></textarea>
+                                <div class="error" style="margin-top: 6px;display: none;">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="q1_error">This field is required</p>
+                                </div>
                             </div>
+
                             <div class="input_field full_width">
-                                <p class="Questions">Think about a situation, environment, or system you interact with regularly (it can be digital, physical, or social).
-                                 What is something most people don’t notice about it—but you have?</p>
+                                <p class="Questions">Think about a situation, environment, or system you interact with regularly (it can be digital, physical, or social). What is something most people don't notice about it—but you have?</p>
                                 <textarea rows="4" id="Question_2" class="highlight_text"></textarea>
+                                <div class="error" style="margin-top: 6px;display: none;">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="q2_error">This field is required</p>
+                                </div>
                             </div>
+
                             <div class="input_field full_width">
-                                <p class="Questions">Explain what you observed, why it stood out to you, and how you interpreted it ?</p>
+                                <p class="Questions">Explain what you observed, why it stood out to you, and how you interpreted it?</p>
                                 <textarea rows="4" id="Question_3" class="highlight_text"></textarea>
+                                <div class="error" style="margin-top: 6px;display: none;">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="q3_error">This field is required</p>
+                                </div>
                             </div>
                         </div>
 
@@ -273,19 +289,19 @@
                         </div>
                     </div>
 
-                    <!-- STEP 3 -->
+                    <!-- ==================== STEP 3 ==================== -->
                     <div class="step3_content" id="step3_content" style="display: none;">
-                        <h2 class="subtitle">Evolve what you’re ready for</h2>
+                        <h2 class="subtitle">Evolve what you're ready for</h2>
                         <p class="description"> </p>
 
                         <div class="field_groups">
 
                             <!-- ─── CUSTOM JOB ROLE DROPDOWN ─── -->
                             <div class="input_field">
-                                <p class="Questions">1. Preferred Role / Area of Interest</p>
+                                <p class="Questions">Preferred Role / Area of Interest</p>
                                 <input type="hidden" id="job_role" name="job_role" value="">
                                 <div class="cd-wrapper" id="job_role_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
-                                    <div class="cd-trigger" id="job_role_trigger"   onclick="cdToggle('job_role')">
+                                    <div class="cd-trigger" id="job_role_trigger" onclick="cdToggle('job_role')">
                                         <span id="job_role_label">Available Positions</span>
                                         <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
                                             <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -300,15 +316,19 @@
                                         <div class="cd-option" onclick="cdSelect('job_role','Motion Graphic/3D Designer','Motion Graphic/3D Designer')">Motion Graphic/3D Designer</div>
                                     </div>
                                 </div>
+                                <div class="error" style="margin-top: 6px;display: none;" id="job_role_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="job_role_error"></p>
+                                </div>
                             </div>
                             <!-- ─── END CUSTOM JOB ROLE DROPDOWN ─── -->
 
                             <!-- ─── CUSTOM EXPERIENCE DROPDOWN ─── -->
                             <div class="input_field">
-                                <p class="Questions">Experience</p>
+                                <p class="Questions">Work Experience</p>
                                 <input type="hidden" id="exp" name="experience" value="">
                                 <div class="cd-wrapper" id="exp_wrapper" style="border: 1px solid #f5f5f542;border-radius: 5px;padding: 4px;">
-                                    <div class="cd-trigger" id="exp_trigger"   onclick="cdToggle('exp')">
+                                    <div class="cd-trigger" id="exp_trigger" onclick="cdToggle('exp')">
                                         <span id="exp_label">Years Of Experience</span>
                                         <svg class="cd-arrow" viewBox="0 0 12 12" fill="none">
                                             <path d="M2 4l4 4 4-4" stroke="#888888cc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -321,36 +341,56 @@
                                         <div class="cd-option" onclick="cdSelect('exp','5+ years','5+ years')">5+ years</div>
                                     </div>
                                 </div>
+                                <div class="error" style="margin-top: 6px;display: none;" id="exp_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="exp_error"></p>
+                                </div>
                             </div>
                             <!-- ─── END CUSTOM EXPERIENCE DROPDOWN ─── -->
 
+                            <!-- ─── SALARY ─── -->
                             <div class="input_field">
-                                <p class="Questions">2. Expected Salary</p>
-                                <div class="salary" style="display:flex;align-items:center;border:1px solid #f5f5f542 !important;border-radius:5px;overflow:hidden;width:98%;padding:2px">
+                                <p class="Questions">Expected Salary</p>
+                                <div class="salary" id="salary_wrapper" style="display:flex;align-items:center;border:1px solid #f5f5f542 !important;border-radius:5px;overflow:hidden;width:98%;padding:2px">
                                     <span class="currency" style="padding:8px 12px;color:#f5f5f542;font-weight:bold;background:transparent;white-space:nowrap;font-size:13px;line-height:normal;position:static;margin:0;width:auto;">₹</span>
                                     <input type="number" class="highlight_text" id="salary" name="salary" placeholder="75,000"
                                         min="1" max="99999" oninput="this.value = this.value.slice(0, 5)"
                                         style="border:none !important;outline:none;flex:1;padding:8px 12px;background:transparent;color:#fff;width:100%;">
                                     <span style="padding:8px 12px;color:#ffffff90;font-size:8px;white-space:nowrap;border-left:1px solid #f5f5f542;background:transparent;">Per month</span>
                                 </div>
+                                <div class="error" style="margin-top: 6px;display: none;" id="salary_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="salary_error"></p>
+                                </div>
                             </div>
 
+                            <!-- ─── JOINING DATE ─── -->
                             <div class="input_field">
-                                <p class="Questions">3. Available to join date?</p>
+                                <p class="Questions">Available to join date?</p>
                                 <input type="text" class="highlight_text" id="joining_date"
                                     style="border:1px solid #f5f5f542 !important;border-radius:5px !important;"
                                     placeholder="DD/MM/YYYY">
+                                <div class="error" style="margin-top: 6px;display: none;" id="joining_date_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="joining_date_error"></p>
+                                </div>
                             </div>
 
+                            <!-- ─── RESUME ─── -->
                             <div class="input_field">
-                                <p class="Questions">4. Upload your resume (PDF, Docs)</p>
+                                <p class="Questions">Upload your resume (PDF, Docs)</p>
                                 <input type="file" class="highlight_text" id="resume_file"
                                     style="border:1px solid #f5f5f542 !important;border-radius:5px !important;color:#888888cc;"
                                     accept=".pdf, .doc, .docx, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+                                <div class="error" style="margin-top: 6px;display: none;" id="resume_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="resume_error"></p>
+                                </div>
                             </div>
 
+                            <!-- ─── WORK LOCATION ─── -->
                             <div class="input_field">
-                                <p class="Questions">5. Preferred Work Location</p>
+                                <p class="Questions">Preferred Work Location</p>
                                 <div class="radio_group" id="work_location">
                                     <label class="radio_option">
                                         <input type="radio" name="Work_Location" value="Chennai (On-site/Full-Time)" required>
@@ -361,12 +401,22 @@
                                         <span>Bangalore (Hybrid/On-site/Full-Time)</span>
                                     </label>
                                 </div>
+                                <div class="error" style="margin-top: 6px;display: none;" id="work_location_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="work_location_error"></p>
+                                </div>
                             </div>
 
+                            <!-- ─── ADDITIONAL INFO ─── -->
                             <div class="input_field full_width">
-                                <p class="Questions">6. Additional information (Why do you want to join us?)</p>
+                                <p class="Questions">Additional information (Why do you want to join us?)</p>
                                 <textarea class="expand_area highlight_text" id="addition" rows="4"></textarea>
+                                <div class="error" style="margin-top: 6px;display: none;" id="addition_error_box">
+                                    <span class="span_error_img"><img src="images/icons8-info-error.png" alt="error_image"></span>
+                                    <p class="error_messages" id="addition_error"></p>
+                                </div>
                             </div>
+
                         </div>
 
                         <div class="form_action_2">
@@ -436,14 +486,12 @@ function cdGetTarget(id) {
     return fs ? fs : wrapper;
 }
 
-/* ─── Simulate focusin (open) ─── */
 function cdFieldFocusIn(id) {
     var target = cdGetTarget(id);
     if (!target) return;
     target.classList.add('active-field');
     target.classList.add('active-text');
     target.style.borderColor = 'unset';
-    /* Clear error box (only relevant when target is a fieldset inside .input_field) */
     var container = target.closest('.input_field');
     if (container) {
         var errorBox = container.querySelector('.error');
@@ -453,7 +501,6 @@ function cdFieldFocusIn(id) {
     }
 }
 
-/* ─── Simulate focusout (close / outside click / option selected) ─── */
 function cdFieldFocusOut(id) {
     var target = cdGetTarget(id);
     if (!target) return;
@@ -461,13 +508,11 @@ function cdFieldFocusOut(id) {
     target.classList.add('active-text');
 }
 
-/* ─── Toggle open / close ─── */
 function cdToggle(id) {
     var trigger = document.getElementById(id + '_trigger');
     var menu    = document.getElementById(id + '_menu');
     var isOpen  = menu.classList.contains('cd-open');
 
-    /* Close all open dropdowns first */
     document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
         var openId = m.id.replace('_menu', '');
         cdFieldFocusOut(openId);
@@ -480,11 +525,10 @@ function cdToggle(id) {
     if (!isOpen) {
         trigger.classList.add('cd-open');
         menu.classList.add('cd-open');
-        cdFieldFocusIn(id);   /* ← focusin on open */
+        cdFieldFocusIn(id);
     }
 }
 
-/* ─── Select an option ─── */
 function cdSelect(id, label, value) {
     document.getElementById(id + '_label').textContent = label;
     document.getElementById(id).value = value;
@@ -495,15 +539,24 @@ function cdSelect(id, label, value) {
     document.querySelectorAll('#' + id + '_menu .cd-option').forEach(function(o) {
         o.classList.toggle('cd-active', o.textContent.trim() === label);
     });
-    cdFieldFocusOut(id);   /* ← focusout on select */
+    cdFieldFocusOut(id);
+
+    /* ── Clear error on selection ── */
+    var errorBoxId = id + '_error_box';
+    var errorMsgId = id + '_error';
+    var errorBox   = document.getElementById(errorBoxId);
+    var errorMsg   = document.getElementById(errorMsgId);
+    var wrapper    = document.getElementById(id + '_wrapper');
+    if (errorBox) errorBox.style.display = 'none';
+    if (errorMsg) errorMsg.innerText = '';
+    if (wrapper)  wrapper.style.removeProperty('border-color');
 }
 
-/* ─── Click outside — close all ─── */
 document.addEventListener('click', function(e) {
     if (!e.target.closest('.cd-wrapper')) {
         document.querySelectorAll('.cd-menu.cd-open').forEach(function(m) {
             var openId = m.id.replace('_menu', '');
-            cdFieldFocusOut(openId);   /* ← focusout on outside click */
+            cdFieldFocusOut(openId);
             m.classList.remove('cd-open');
         });
         document.querySelectorAll('.cd-trigger.cd-open').forEach(function(t) {
