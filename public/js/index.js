@@ -160,6 +160,51 @@ function setMenuState(index, state) {
 }
 
 
+/*======== HELPER: Show field error ============*/
+function showFieldError(fieldsetId, errorId, message) {
+    const fieldset = document.getElementById(fieldsetId);
+    const errorMsg = document.getElementById(errorId);
+    if (fieldset) fieldset.style.borderColor = "#ff4d4f";
+    if (errorMsg) errorMsg.innerText = message;
+    const errorBox = fieldset ? fieldset.closest(".input_field").querySelector(".error") : null;
+    if (errorBox) errorBox.style.display = "block";
+}
+
+/*======== HELPER: Clear field error ============*/
+function clearFieldError(fieldsetId, errorId) {
+    const fieldset = document.getElementById(fieldsetId);
+    const errorMsg = document.getElementById(errorId);
+    if (fieldset) fieldset.style.borderColor = "unset";
+    if (errorMsg) errorMsg.innerText = "";
+    const errorBox = fieldset ? fieldset.closest(".input_field").querySelector(".error") : null;
+    if (errorBox) errorBox.style.display = "none";
+}
+
+/*======== HELPER: Show inline error on element ============*/
+function showInlineError(element, message) {
+    if (!element) return;
+    element.style.setProperty("border-color", "#ff4d4f", "important");
+
+    /* Try to find or create an error message element after the field */
+    let errEl = element.parentElement ? element.parentElement.querySelector(".step3_error_msg") : null;
+    if (!errEl) {
+        errEl = document.createElement("p");
+        errEl.className = "step3_error_msg";
+        errEl.style.cssText = "color:#ff4d4f9e;font-size:11px;margin-top:4px;";
+        if (element.parentElement) element.parentElement.appendChild(errEl);
+    }
+    if (message) errEl.innerText = message;
+}
+
+/*======== HELPER: Clear inline error on element ============*/
+function clearInlineError(element) {
+    if (!element) return;
+    element.style.removeProperty("border-color");
+    const errEl = element.parentElement ? element.parentElement.querySelector(".step3_error_msg") : null;
+    if (errEl) errEl.innerText = "";
+}
+
+
 /*======== VALIDATE STEP 1 ============*/
 function validateStep1() {
     let isValid = true;
@@ -168,117 +213,81 @@ function validateStep1() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^[0-9]{10,15}$/;
 
-    /* NAME */
+    /* ── NAME ── */
     if (fullName.value.trim() === "") {
-        document.getElementById("fieldset_name").style.borderColor = "#ff4d4f";
-        document.getElementById("name_error").innerText = "Full name is required";
-        document.querySelector("#fieldset_name").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_name", "name_error", "Full name is required");
         isValid = false;
     } else if (!nameRegex.test(fullName.value.trim())) {
-        document.getElementById("fieldset_name").style.borderColor = "#ff4d4f";
-        document.getElementById("name_error").innerText = "Minimum 3 characters, letters only";
-        document.querySelector("#fieldset_name").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_name", "name_error", "Minimum 3 characters, letters only");
         isValid = false;
     } else {
-        document.getElementById("name_error").innerText = "";
-        document.getElementById("fieldset_name").style.borderColor = "unset";
-        document.querySelector("#fieldset_name").closest(".input_field").querySelector(".error").style.display = "none";
+        clearFieldError("fieldset_name", "name_error");
     }
 
-    /* GENDER */
-    if (gender.value === "") {
-        document.getElementById("fieldset_gender").style.borderColor = "#ff4d4f";
-        document.getElementById("gender_error").innerText = "Gender field is required";
-        document.querySelector("#fieldset_gender").closest(".input_field").querySelector(".error").style.display = "block";
-        isValid = false;
-    } else {
-        document.getElementById("gender_error").innerText = "";
-        document.getElementById("fieldset_gender").style.borderColor = "unset";
-        document.querySelector("#fieldset_gender").closest(".input_field").querySelector(".error").style.display = "none";
-    }
-
-    /* AGE */
+    /* ── AGE ── */
     if (dob.value.trim() === "") {
-        document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
-        document.getElementById("dob_error").innerText = "Age is required";
-        document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_dob", "dob_error", "Age is required");
         isValid = false;
     } else {
         const age = Number(dob.value.trim());
         if (isNaN(age)) {
-            document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
-            document.getElementById("dob_error").innerText = "Enter valid age";
-            document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
+            showFieldError("fieldset_dob", "dob_error", "Enter a valid age");
             isValid = false;
         } else if (age < 21) {
-            document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
-            document.getElementById("dob_error").innerText = "Minimum age is 21";
-            document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
+            showFieldError("fieldset_dob", "dob_error", "Minimum age is 21");
             isValid = false;
         } else if (age > 45) {
-            document.getElementById("fieldset_dob").style.borderColor = "#ff4d4f";
-            document.getElementById("dob_error").innerText = "Maximum age is 45";
-            document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "block";
+            showFieldError("fieldset_dob", "dob_error", "Maximum age is 45");
             isValid = false;
         } else {
-            document.getElementById("dob_error").innerText = "";
-            document.getElementById("fieldset_dob").style.borderColor = "unset";
-            document.querySelector("#fieldset_dob").closest(".input_field").querySelector(".error").style.display = "none";
+            clearFieldError("fieldset_dob", "dob_error");
         }
     }
 
-    /* EMAIL */
+    /* ── GENDER ── */
+    if (!gender || gender.value.trim() === "") {
+        showFieldError("fieldset_gender", "gender_error", "Please select a gender");
+        isValid = false;
+    } else {
+        clearFieldError("fieldset_gender", "gender_error");
+    }
+
+    /* ── EMAIL ── */
     if (email.value.trim() === "") {
-        document.getElementById("fieldset_email").style.borderColor = "#ff4d4f";
-        document.getElementById("email_error").innerText = "Email is required";
-        document.querySelector("#fieldset_email").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_email", "email_error", "Email is required");
         isValid = false;
     } else if (!emailRegex.test(email.value.trim())) {
-        document.getElementById("fieldset_email").style.borderColor = "#ff4d4f";
-        document.getElementById("email_error").innerText = "Enter a valid email";
-        document.querySelector("#fieldset_email").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_email", "email_error", "Enter a valid email");
         isValid = false;
     } else {
-        document.getElementById("fieldset_email").style.borderColor = "unset";
-        document.getElementById("email_error").innerText = "";
-        document.querySelector("#fieldset_email").closest(".input_field").querySelector(".error").style.display = "none";
+        clearFieldError("fieldset_email", "email_error");
     }
 
-    /* PHONE */
+    /* ── PHONE ── */
     if (phone.value.trim() === "") {
-        document.getElementById("fieldset_number").style.borderColor = "#ff4d4f";
-        document.getElementById("contact_error").innerText = "Contact number required";
-        document.querySelector("#fieldset_number").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_number", "contact_error", "Contact number is required");
         isValid = false;
     } else if (!phoneRegex.test(phone.value.trim())) {
-        document.getElementById("fieldset_number").style.borderColor = "#ff4d4f";
-        document.getElementById("contact_error").innerText = "Enter valid phone number";
-        document.querySelector("#fieldset_number").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_number", "contact_error", "Enter a valid 10–15 digit phone number");
         isValid = false;
     } else {
-        document.getElementById("fieldset_number").style.borderColor = "unset";
-        document.getElementById("contact_error").innerText = "";
-        document.querySelector("#fieldset_number").closest(".input_field").querySelector(".error").style.display = "none";
+        clearFieldError("fieldset_number", "contact_error");
     }
 
-    /* LOCATION */
+    /* ── LOCATION ── */
     if (currentLocation.value.trim() === "") {
-        document.getElementById("fieldset_location").style.borderColor = "#ff4d4f";
-        document.getElementById("location_error").innerText = "Location required";
-        document.querySelector("#fieldset_location").closest(".input_field").querySelector(".error").style.display = "block";
+        showFieldError("fieldset_location", "location_error", "Location is required");
         isValid = false;
     } else {
-        document.getElementById("fieldset_location").style.borderColor = "unset";
-        document.getElementById("location_error").innerText = "";
-        document.querySelector("#fieldset_location").closest(".input_field").querySelector(".error").style.display = "none";
+        clearFieldError("fieldset_location", "location_error");
     }
 
-    /* DESCRIBE */
+    /* ── DESCRIBE ── */
     if (describe.value.trim() === "") {
         document.getElementById("describe_field").style.setProperty("border-color", "#ff4d4f", "important");
         isValid = false;
     } else {
-        document.getElementById("describe_field").style.setProperty("border-color", "unset", "important");
+        document.getElementById("describe_field").style.removeProperty("border-color");
     }
 
     /* IF ALL VALID → MOVE TO STEP 2 */
@@ -300,12 +309,12 @@ function validateStep2() {
 
     const qFields = [q_1, q_2, q_3];
     qFields.forEach(function (f) {
-        if (!f) return; /* skip if element not found in DOM */
+        if (!f) return;
         if (f.value.trim() === "") {
             f.style.setProperty("border-color", "#ff4d4f", "important");
             isValid = false;
         } else {
-            f.style.borderColor = "unset";
+            f.style.removeProperty("border-color");
         }
     });
 
@@ -326,38 +335,91 @@ function validateStep2() {
 function validateStep3() {
     let isValid = true;
 
-    const stepFields = [q_5, exp, q_6, q_7, q_9];
-    stepFields.forEach(function (field) {
-        if (!field) return;
-        if (field.value.trim() === "") {
-            field.style.setProperty("border-color", "#ff4d4f", "important");
-            isValid = false;
-        } else {
-            field.style.removeProperty("border-color");
-        }
-    });
-
-    /* SALARY — must be a number */
-    if (q_6 && q_6.value.trim() !== "" && isNaN(parseInt(q_6.value))) {
-        q_6.style.setProperty("border-color", "#ff4d4f", "important");
-        isValid = false;
-    }
-
-    /* FIX: Use id="work_location" (lowercase) — matches the div in the HTML */
-    const selectedWorkLocation = document.querySelector('input[name="Work_Location"]:checked');
-    if (!selectedWorkLocation) {
-        /* FIX: was getElementById("Work_Location") — wrong case, element not found */
-        const radioGroup = document.getElementById("work_location");
-        if (radioGroup) radioGroup.style.setProperty("border", "1px solid #ff4d4f", "important");
-        console.warn("Work location not selected");
+    /* ── PREFERRED ROLE (custom dropdown, hidden input) ── */
+    if (!q_5 || q_5.value.trim() === "") {
+        const roleWrapper = document.getElementById("job_role_wrapper");
+        if (roleWrapper) roleWrapper.style.setProperty("border-color", "#ff4d4f", "important");
+        showOrCreateStep3Error("job_role_wrapper", "Please select a preferred role");
         isValid = false;
     } else {
-        /* FIX: was getElementById("Work_Location") — wrong case, element not found */
-        const radioGroup = document.getElementById("work_location");
-        if (radioGroup) radioGroup.style.removeProperty("border");
+        const roleWrapper = document.getElementById("job_role_wrapper");
+        if (roleWrapper) roleWrapper.style.removeProperty("border-color");
+        removeStep3Error("job_role_wrapper");
     }
 
-    /* FILE VALIDATION */
+    /* ── EXPERIENCE (custom dropdown, hidden input) ── */
+    if (!exp || exp.value.trim() === "") {
+        const expWrapper = document.getElementById("exp_wrapper");
+        if (expWrapper) expWrapper.style.setProperty("border-color", "#ff4d4f", "important");
+        showOrCreateStep3Error("exp_wrapper", "Please select your experience");
+        isValid = false;
+    } else {
+        const expWrapper = document.getElementById("exp_wrapper");
+        if (expWrapper) expWrapper.style.removeProperty("border-color");
+        removeStep3Error("exp_wrapper");
+    }
+
+    /* ── SALARY ── */
+    const salaryWrapper = q_6 ? q_6.closest(".salary") : null;
+    if (!q_6 || q_6.value.trim() === "") {
+        if (salaryWrapper) salaryWrapper.style.setProperty("border-color", "#ff4d4f", "important");
+        showOrCreateErrorAfterEl(salaryWrapper, "salary-err", "Expected salary is required");
+        isValid = false;
+    } else if (isNaN(parseInt(q_6.value)) || parseInt(q_6.value) <= 0) {
+        if (salaryWrapper) salaryWrapper.style.setProperty("border-color", "#ff4d4f", "important");
+        showOrCreateErrorAfterEl(salaryWrapper, "salary-err", "Enter a valid salary amount");
+        isValid = false;
+    } else {
+        if (salaryWrapper) salaryWrapper.style.removeProperty("border-color");
+        removeErrorAfterEl(salaryWrapper, "salary-err");
+    }
+
+    /* ── JOINING DATE ── */
+    if (!q_7 || q_7.value.trim() === "") {
+        q_7.style.setProperty("border-color", "#ff4d4f", "important");
+        isValid = false;
+        console.log("Asha");
+        document.getElementById('joining_date_error_box').style.display="block";
+        document.getElementById('joining_date_error').textContent="Please select your available date";
+        
+    } else {
+        q_7.style.removeProperty("border-color");
+        document.getElementById('joining_date_error_box').style.display="none";
+        document.getElementById('joining_date_error').textContent="";
+    }
+
+    /* ── WORK LOCATION (radio buttons) — loop pattern ── */
+    var workRadios = document.getElementsByName("Work_Location");
+    var workLocationValid = false;
+    var selectedWorkLocation = null;
+    var wi = 0;
+    while (!workLocationValid && wi < workRadios.length) {
+        if (workRadios[wi].checked) {
+            workLocationValid = true;
+            selectedWorkLocation = workRadios[wi];
+        }
+        wi++;
+    }
+    const radioGroup = document.getElementById("work_location");
+    if (!workLocationValid) {
+        if (radioGroup) {
+            // radioGroup.style.setProperty("border", "1px solid #ff4d4f", "important");
+            radioGroup.style.setProperty("border-radius", "5px", "important");
+            radioGroup.style.setProperty("padding", "6px", "important");
+        }
+        // showOrCreateStep3Error("work_location", "Please select a preferred work location");
+        alert("Please select a preferred work location");
+        isValid = false;
+    } else {
+        if (radioGroup) {
+            radioGroup.style.removeProperty("border");
+            radioGroup.style.removeProperty("border-radius");
+            radioGroup.style.removeProperty("padding");
+        }
+        removeStep3Error("work_location");
+    }
+
+    /* ── RESUME FILE ── */
     if (!q_8) {
         console.warn("Element #resume_file not found in the DOM");
         isValid = false;
@@ -366,9 +428,12 @@ function validateStep3() {
 
         if (!file) {
             q_8.style.setProperty("border-color", "#ff4d4f", "important");
+            document.getElementById('resume_error_box').style.display="block";
+            document.getElementById('resume_error').textContent="Please upload your resume";
             isValid = false;
         } else {
             q_8.style.removeProperty("border-color");
+            document.getElementById('joining_date_error_box').style.display="none";
 
             const allowedTypes = [
                 "application/pdf",
@@ -383,11 +448,19 @@ function validateStep3() {
                 q_8.value = "";
                 isValid = false;
             } else if (file.size > 5 * 1024 * 1024) {
-                alert("Max file size is 5MB");
+                alert("Max file size is 5 MB");
                 q_8.value = "";
                 isValid = false;
             }
         }
+    }
+
+    /* ── ADDITIONAL INFO ── */
+    if (!q_9 || q_9.value.trim() === "") {
+        q_9.style.setProperty("border-color", "#ff4d4f", "important");
+        isValid = false;
+    } else {
+        q_9.style.removeProperty("border-color");
     }
 
     if (!isValid) return;
@@ -399,23 +472,23 @@ function validateStep3() {
     showLoader();
 
     const fd = new FormData();
-    fd.append("name",            fullName.value);
-    fd.append("email",           email.value);
-    fd.append("phone",           phone.value);
-    fd.append("dob",             dob.value);
-    fd.append("gender",          gender.value);
-    fd.append("location",        currentLocation.value);
-    fd.append("describe",        describe.value);
-    fd.append("q_1",             q_1.value);
-    fd.append("q_2",             q_2.value);
-    fd.append("q_3",             q_3.value);
-    fd.append("preferred_role",  q_5 ? q_5.value : "");
-    fd.append("experience",      exp ? exp.value : "");
+    fd.append("name",            fullName.value.trim());
+    fd.append("email",           email.value.trim());
+    fd.append("phone",           phone.value.trim());
+    fd.append("dob",             dob.value.trim());
+    fd.append("gender",          gender.value.trim());
+    fd.append("location",        currentLocation.value.trim());
+    fd.append("describe",        describe.value.trim());
+    fd.append("q_1",             q_1.value.trim());
+    fd.append("q_2",             q_2.value.trim());
+    fd.append("q_3",             q_3.value.trim());
+    fd.append("preferred_role",  q_5 ? q_5.value.trim() : "");
+    fd.append("experience",      exp ? exp.value.trim() : "");
     fd.append("expected_salary", q_6 ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN") : "");
-    fd.append("joining_date",    q_7 ? q_7.value : "");
+    fd.append("joining_date",    q_7 ? q_7.value.trim() : "");
     fd.append("work_location",   selectedWorkLocation ? selectedWorkLocation.value : "");
     fd.append("resume",          q_8.files[0]);
-    fd.append("message",         q_9 ? q_9.value : "");
+    fd.append("message",         q_9 ? q_9.value.trim() : "");
 
     fetch("/submit", {
         method: "POST",
@@ -446,7 +519,76 @@ function validateStep3() {
 }
 
 
-/*======== DATEPICKER ============*/
+/*======== STEP 3 ERROR HELPERS ============*/
+/**
+ * Show (or create) a small error message below a wrapper element.
+ * @param {string} wrapperId  - ID of the parent container
+ * @param {string} message    - Error text
+ */
+function showOrCreateStep3Error(wrapperId, message) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper) return;
+
+    /* Reuse existing error el if already injected */
+    let errEl = wrapper.parentElement
+        ? wrapper.parentElement.querySelector(".s3-err-" + wrapperId)
+        : null;
+
+    if (!errEl) {
+        errEl = document.createElement("p");
+        errEl.className = "s3-err-" + wrapperId;
+        errEl.style.cssText = "color:#ff4d4f9e;font-size:11px;margin-top:4px;font-family:inter,sans-serif;";
+        wrapper.insertAdjacentElement("afterend", errEl);
+    }
+    errEl.innerText = message;
+}
+
+/**
+ * Remove the injected error message below a wrapper element.
+ * @param {string} wrapperId - ID of the parent container
+ */
+function removeStep3Error(wrapperId) {
+    const wrapper = document.getElementById(wrapperId);
+    if (!wrapper || !wrapper.parentElement) return;
+    const errEl = wrapper.parentElement.querySelector(".s3-err-" + wrapperId);
+    if (errEl) errEl.innerText = "";
+}
+
+
+/**
+ * Show (or create) an error message directly after any DOM element (used for salary).
+ * @param {Element} anchorEl  - The element to insert the error after
+ * @param {string}  className - Unique class name to identify this error node
+ * @param {string}  message   - Error text
+ */
+function showOrCreateErrorAfterEl(anchorEl, className, message) {
+    if (!anchorEl) return;
+
+    let errEl = anchorEl.parentElement
+        ? anchorEl.parentElement.querySelector("." + className)
+        : null;
+
+    if (!errEl) {
+        errEl = document.createElement("p");
+        errEl.className = className;
+        errEl.style.cssText = "color:#ff4d4f9e;font-size:11px;margin-top:5px;font-family:inter,sans-serif;";
+        anchorEl.insertAdjacentElement("afterend", errEl);
+    }
+    errEl.innerText = message;
+}
+
+/**
+ * Remove a previously injected error message after an element.
+ * @param {Element} anchorEl  - The anchor element
+ * @param {string}  className - Unique class name used when creating the error
+ */
+function removeErrorAfterEl(anchorEl, className) {
+    if (!anchorEl || !anchorEl.parentElement) return;
+    const errEl = anchorEl.parentElement.querySelector("." + className);
+    if (errEl) errEl.innerText = "";
+}
+
+
 $(function () {
     $("#joining_date").datepicker({
         dateFormat: "dd/mm/yy",
@@ -480,6 +622,7 @@ if (storedEmail) {
 }
 
 
+/*======== PREVIOUS BUTTONS ============*/
 document.addEventListener("DOMContentLoaded", function () {
 
     /* PREVIOUS — Step 2 → Step 1 */
