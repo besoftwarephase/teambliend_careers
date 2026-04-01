@@ -160,7 +160,7 @@ body {
 
 /* ─── CONTAINER ─────────────────────────────────────────── */
 .container {
-  background: #333232;
+  /* background: #333232; */
   padding: 5px;
   border-radius: 30px;
   /* box-shadow: 0 15px 35px rgba(0,0,0,0.35); */
@@ -175,17 +175,19 @@ body {
   text-align: center;
   color: white;
   position: relative;
-  background: linear-gradient(76deg, #252425 0%, #636363 100%);
+  background: linear-gradient(76deg, #25242536 0%, #636363 100%);
   box-shadow:
     /* 0 8px 30px rgba(0,0,0,0.4), */
     inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .card h2 {
-  font-size: clamp(18px, 5vw, 32px);
-  font-weight: 400;
+  font-size: clamp(23px, 5vw, 32px);
+  font-weight: 700;
   margin-bottom: 10px;
-  color: #ffffffd4;
+  background: linear-gradient(1deg, #ffffff 0%, #888282 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .card > p {
@@ -235,9 +237,9 @@ body {
 /* ─── ARROW BUTTON ──────────────────────────────────────── */
 .arrow {
   position: absolute;
-  right: 5px;
+  right: 6px;
   /* FIX: align to the input field itself, not the whole .input-box which includes errorMsg */
-  top: 5px;
+  top: 8%;
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -310,11 +312,7 @@ body {
   text-align: center;
   font-size: clamp(8px, 2vw, 9px);
   color: #ffffff94;
-  font-weight: 100;
-}
-
-.footer strong {
-  color: #e5e7ebb8;
+  font-weight: 300;
 }
 
 .footer:hover {
@@ -422,8 +420,8 @@ body {
   .arrow {
     width: 28px;
     height: 28px;
-    /* FIX: keep consistent with desktop fix — align to top of input */
-    top: 5px;
+    top: 7px;
+     right: 7px;
   }
 
   .av1 { width: 30px; height: 30px; border-width: 2px; margin-right: -10px; margin-bottom: 6px; display: none; }
