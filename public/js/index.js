@@ -121,11 +121,13 @@ document.querySelectorAll(".highlight_text").forEach(function (field) {
             const errorinline   = container.querySelector(".s3-err-job_role_wrapper");
             const errorexp      = container.querySelector(".s3-err-exp_wrapper");
             const errorsalary   = container.querySelector(".salary-err");
+            const errorlocation = container.querySelector(".s3-err-work_location_wrapper");
             if (errorBox)    errorBox.style.display = "none";
             if (errorText)   errorText.innerText    = "";
             if (errorinline) errorinline.innerText  = "";
             if (errorexp)    errorexp.innerText     = "";
             if (errorsalary) errorsalary.innerText  = "";
+            if (errorlocation) errorlocation.innerText = "";
         }
     });
 
