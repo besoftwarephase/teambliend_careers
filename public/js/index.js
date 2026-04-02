@@ -139,6 +139,7 @@ document.querySelectorAll(".highlight_text").forEach(function (field) {
     ["input", "change"].forEach(function (evt) {
         field.addEventListener(evt, function () {
             if (this.value == null) return;
+            console.log("Before")
             this.style.color = this.value.trim() !== "" ? "#f5f5f5" : "";
         });
     });
