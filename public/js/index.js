@@ -493,39 +493,51 @@ $(function () {
         dateFormat: "dd/mm/yy",
         minDate: 0,
         beforeShow: function (input, inst) {
+            /*
+             * Use setTimeout(..., 1) — one tick delay — so the browser has
+             * finished painting the picker div before we read its dimensions.
+             * setTimeout(..., 0) can still return 0 for outerHeight() on the
+             * first paint, which caused the picker to open above the field.
+             */
             setTimeout(function () {
-                var $input      = $(input);
-                var inputOffset = $input.offset();
-                var inputLeft   = inputOffset.left;
-                var inputTop    = inputOffset.top + $input.outerHeight() + 5;
-                var dpWidth     = inst.dpDiv.outerWidth();
-                var vpWidth     = $(window).width();
-                var padding     = 8; // min gap from viewport edge
+                var $input   = $(input);
+                var offset   = $input.offset();        // position relative to document
+                var iWidth   = $input.outerWidth();    // match picker width to input
+                var iHeight  = $input.outerHeight();
+                var dpHeight = inst.dpDiv.outerHeight();
 
-                // Clamp left so the picker never overflows right or left edge
-                var clampedLeft = Math.max(
-                    padding,
-                    Math.min(inputLeft, vpWidth - dpWidth - padding)
-                );
-
-                // On narrow screens (mobile), also clamp top so it doesn't
-                // get hidden below the fold; fall back to above the input
-                // if there's not enough room below.
-                var dpHeight  = inst.dpDiv.outerHeight();
+                var vpWidth   = $(window).width();
                 var vpHeight  = $(window).height();
                 var scrollTop = $(window).scrollTop();
-                var spaceBelow = vpHeight + scrollTop - inputTop;
-                var spaceAbove = inputOffset.top - scrollTop - 5;
 
-                var clampedTop = (spaceBelow < dpHeight && spaceAbove > dpHeight)
-                    ? inputOffset.top - dpHeight - 5  // open upward
-                    : inputTop;                         // open downward (default)
+                /* Available space below and above the input */
+                var spaceBelow = vpHeight + scrollTop - (offset.top + iHeight + 5);
+                var spaceAbove = offset.top - scrollTop - 5;
+
+                /*
+                 * Default: open BELOW the input.
+                 * Only open ABOVE when there is genuinely not enough room below
+                 * AND there is enough room above — prevents the "always opens above"
+                 * bug that occurred when dpHeight was mis-read as 0.
+                 */
+                var top = (spaceBelow < dpHeight && spaceAbove >= dpHeight)
+                    ? offset.top - dpHeight - 5   // open upward
+                    : offset.top + iHeight + 5;   // open downward (default)
+
+                /* Clamp left so the picker never overflows the right/left edge */
+                var left = Math.max(
+                    8,
+                    Math.min(offset.left, vpWidth - iWidth - 8)
+                );
 
                 inst.dpDiv.css({
-                    top:  clampedTop,
-                    left: clampedLeft,
+                    position : "absolute",   // reinforce absolute so coordinates are reliable
+                    top      : top,
+                    left     : left,
+                    width    : iWidth,       // picker same width as the input field
+                    minWidth : iWidth,
                 });
-            }, 0);
+            }, 1);   // <-- 1ms, not 0ms
         },
     });
 });
