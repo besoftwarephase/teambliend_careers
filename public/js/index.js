@@ -487,22 +487,18 @@ function validateStep3() {
 /* ============================================================
    DATEPICKER
    ============================================================ */
-
 $(function () {
     $("#joining_date").datepicker({
         dateFormat: "dd/mm/yy",
         minDate: 0,
         beforeShow: function (input, inst) {
-            /*
-             * Use setTimeout(..., 1) — one tick delay — so the browser has
-             * finished painting the picker div before we read its dimensions.
-             * setTimeout(..., 0) can still return 0 for outerHeight() on the
-             * first paint, which caused the picker to open above the field.
-             */
+            //  ADD THIS — apply active border when datepicker opens
+            $(input).css("border-color", "#80797961");
+
             setTimeout(function () {
                 var $input   = $(input);
-                var offset   = $input.offset();        // position relative to document
-                var iWidth   = $input.outerWidth();    // match picker width to input
+                var offset   = $input.offset();
+                var iWidth   = $input.outerWidth();
                 var iHeight  = $input.outerHeight();
                 var dpHeight = inst.dpDiv.outerHeight();
 
@@ -510,37 +506,88 @@ $(function () {
                 var vpHeight  = $(window).height();
                 var scrollTop = $(window).scrollTop();
 
-                /* Available space below and above the input */
                 var spaceBelow = vpHeight + scrollTop - (offset.top + iHeight + 5);
                 var spaceAbove = offset.top - scrollTop - 5;
 
-                /*
-                 * Default: open BELOW the input.
-                 * Only open ABOVE when there is genuinely not enough room below
-                 * AND there is enough room above — prevents the "always opens above"
-                 * bug that occurred when dpHeight was mis-read as 0.
-                 */
                 var top = (spaceBelow < dpHeight && spaceAbove >= dpHeight)
-                    ? offset.top - dpHeight - 5   // open upward
-                    : offset.top + iHeight + 5;   // open downward (default)
+                    ? offset.top - dpHeight - 5
+                    : offset.top + iHeight + 5;
 
-                /* Clamp left so the picker never overflows the right/left edge */
                 var left = Math.max(
                     8,
                     Math.min(offset.left, vpWidth - iWidth - 8)
                 );
 
                 inst.dpDiv.css({
-                    position : "absolute",   // reinforce absolute so coordinates are reliable
+                    position : "absolute",
                     top      : top,
                     left     : left,
-                    width    : iWidth,       // picker same width as the input field
+                    width    : iWidth,
                     minWidth : iWidth,
                 });
-            }, 1);   // <-- 1ms, not 0ms
+            }, 1);
         },
+
+        //  ADD THIS — reset border when datepicker closes
+        onClose: function (dateText, inst) {
+            $(this).css("border-color", "#80797961");
+        }
     });
 });
+
+// $(function () {
+//     $("#joining_date").datepicker({
+//         dateFormat: "dd/mm/yy",
+//         minDate: 0,
+//         beforeShow: function (input, inst) {
+//             /*
+//              * Use setTimeout(..., 1) — one tick delay — so the browser has
+//              * finished painting the picker div before we read its dimensions.
+//              * setTimeout(..., 0) can still return 0 for outerHeight() on the
+//              * first paint, which caused the picker to open above the field.
+//              */
+//             setTimeout(function () {
+//                 var $input   = $(input);
+//                 var offset   = $input.offset();        // position relative to document
+//                 var iWidth   = $input.outerWidth();    // match picker width to input
+//                 var iHeight  = $input.outerHeight();
+//                 var dpHeight = inst.dpDiv.outerHeight();
+
+//                 var vpWidth   = $(window).width();
+//                 var vpHeight  = $(window).height();
+//                 var scrollTop = $(window).scrollTop();
+
+//                 /* Available space below and above the input */
+//                 var spaceBelow = vpHeight + scrollTop - (offset.top + iHeight + 5);
+//                 var spaceAbove = offset.top - scrollTop - 5;
+
+//                 /*
+//                  * Default: open BELOW the input.
+//                  * Only open ABOVE when there is genuinely not enough room below
+//                  * AND there is enough room above — prevents the "always opens above"
+//                  * bug that occurred when dpHeight was mis-read as 0.
+//                  */
+//                 var top = (spaceBelow < dpHeight && spaceAbove >= dpHeight)
+//                     ? offset.top - dpHeight - 5   // open upward
+//                     : offset.top + iHeight + 5;   // open downward (default)
+
+//                 /* Clamp left so the picker never overflows the right/left edge */
+//                 var left = Math.max(
+//                     8,
+//                     Math.min(offset.left, vpWidth - iWidth - 8)
+//                 );
+
+//                 inst.dpDiv.css({
+//                     position : "absolute",   // reinforce absolute so coordinates are reliable
+//                     top      : top,
+//                     left     : left,
+//                     width    : iWidth,       // picker same width as the input field
+//                     minWidth : iWidth,
+//                 });
+//             }, 1);   // <-- 1ms, not 0ms
+//         },
+//     });
+// });
 
 
 /* ============================================================
