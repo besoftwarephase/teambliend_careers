@@ -120,11 +120,11 @@ document.querySelectorAll(".highlight_text").forEach(function (field) {
             const errorText     = container.querySelector(".error_messages");
             const errorinline   = container.querySelector(".s3-err-job_role_wrapper");
             const errorexp      = container.querySelector(".s3-err-exp_wrapper");
-            const errorsalary   = container.querySelector(".salary-err"); // FIX 1: was "contsiner"
+            const errorsalary   = container.querySelector(".salary-err");
             if (errorBox)    errorBox.style.display = "none";
             if (errorText)   errorText.innerText    = "";
             if (errorinline) errorinline.innerText  = "";
-            if (errorexp)    errorexp.innerText     = ""; // FIX 2: was "errorinline.innerText"
+            if (errorexp)    errorexp.innerText     = "";
             if (errorsalary) errorsalary.innerText  = "";
         }
     });
@@ -371,25 +371,27 @@ function validateStep3() {
     const joiningError    = document.getElementById("joining_date_error");
     if (!q_7 || !q_7.value.trim()) {
         q_7.style.setProperty("border-color", "#ff4d4f", "important");
-        if (joiningErrorBox) joiningErrorBox.style.display = "block"; // FIX 3: added null-check
-        if (joiningError)    joiningError.textContent = "Please select your available date"; // FIX 3
+        if (joiningErrorBox) joiningErrorBox.style.display = "block";
+        if (joiningError)    joiningError.textContent = "Please select your available date";
         isValid = false;
     } else {
         q_7.style.removeProperty("border-color");
-        if (joiningErrorBox) joiningErrorBox.style.display = "none"; // FIX 3
-        if (joiningError)    joiningError.textContent = ""; // FIX 3
+        if (joiningErrorBox) joiningErrorBox.style.display = "none";
+        if (joiningError)    joiningError.textContent = "";
     }
 
-    // Work location (radio)
-    const workRadios = document.getElementsByName("Work_Location");
-    let selectedWorkLocation = null;
-    Array.from(workRadios).forEach(function (radio) {
-        if (radio.checked) selectedWorkLocation = radio;
-    });
+    // Work location (dropdown)
+    const workLocationInput   = document.getElementById("work_location");
+    const workLocationWrapper = document.getElementById("work_location_wrapper");
+    const selectedWorkLocation = workLocationInput ? workLocationInput.value.trim() : "";
 
     if (!selectedWorkLocation) {
-        alert("Please select a preferred work location");
+        if (workLocationWrapper) workLocationWrapper.style.setProperty("border-color", "#ff4d4f", "important");
+        showOrCreateStep3Error("work_location_wrapper", "Please select a preferred work location");
         isValid = false;
+    } else {
+        if (workLocationWrapper) workLocationWrapper.style.removeProperty("border-color");
+        removeStep3Error("work_location_wrapper");
     }
 
     // Resume file
@@ -401,8 +403,8 @@ function validateStep3() {
         isValid = false;
     } else if (!q_8.files[0]) {
         q_8.style.setProperty("border-color", "#ff4d4f", "important");
-        if (resumeErrorBox) resumeErrorBox.style.display = "block"; // FIX 4: added null-check
-        if (resumeError)    resumeError.textContent = "Please upload your resume"; // FIX 4
+        if (resumeErrorBox) resumeErrorBox.style.display = "block";
+        if (resumeError)    resumeError.textContent = "Please upload your resume";
         isValid = false;
     } else {
         const file             = q_8.files[0];
@@ -412,7 +414,7 @@ function validateStep3() {
         const fileExt          = file.name.toLowerCase().split(".").pop();
 
         q_8.style.removeProperty("border-color");
-        if (resumeErrorBox) resumeErrorBox.style.display = "none"; // FIX 4
+        if (resumeErrorBox) resumeErrorBox.style.display = "none";
 
         if (!allowedTypes.includes(file.type) && !allowedExts.includes(fileExt)) {
             alert("Only PDF / DOC / DOCX files are allowed");
@@ -455,7 +457,7 @@ function validateStep3() {
     fd.append("experience",      exp  ? exp.value.trim()                                        : "");
     fd.append("expected_salary", q_6  ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN")     : "");
     fd.append("joining_date",    q_7  ? q_7.value.trim()                                        : "");
-    fd.append("work_location",   selectedWorkLocation ? selectedWorkLocation.value               : "");
+    fd.append("work_location",   selectedWorkLocation);
     fd.append("resume",          q_8.files[0]);
     fd.append("message",         q_9  ? q_9.value.trim()                                        : "");
 
@@ -490,9 +492,36 @@ $(function () {
         minDate: 0,
         beforeShow: function (input, inst) {
             setTimeout(function () {
+                var $input      = $(input);
+                var inputOffset = $input.offset();
+                var inputLeft   = inputOffset.left;
+                var inputTop    = inputOffset.top + $input.outerHeight() + 5;
+                var dpWidth     = inst.dpDiv.outerWidth();
+                var vpWidth     = $(window).width();
+                var padding     = 8; // min gap from viewport edge
+
+                // Clamp left so the picker never overflows right or left edge
+                var clampedLeft = Math.max(
+                    padding,
+                    Math.min(inputLeft, vpWidth - dpWidth - padding)
+                );
+
+                // On narrow screens (mobile), also clamp top so it doesn't
+                // get hidden below the fold; fall back to above the input
+                // if there's not enough room below.
+                var dpHeight  = inst.dpDiv.outerHeight();
+                var vpHeight  = $(window).height();
+                var scrollTop = $(window).scrollTop();
+                var spaceBelow = vpHeight + scrollTop - inputTop;
+                var spaceAbove = inputOffset.top - scrollTop - 5;
+
+                var clampedTop = (spaceBelow < dpHeight && spaceAbove > dpHeight)
+                    ? inputOffset.top - dpHeight - 5  // open upward
+                    : inputTop;                         // open downward (default)
+
                 inst.dpDiv.css({
-                    top:  $(input).offset().top + $(input).outerHeight() + 5,
-                    left: $(input).offset().left,
+                    top:  clampedTop,
+                    left: clampedLeft,
                 });
             }, 0);
         },
