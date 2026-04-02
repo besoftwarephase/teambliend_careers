@@ -37,7 +37,7 @@ body {
 #unsupported_browser_banner {
   display: none;
   position: fixed;
-  top: 0; /* FIX: was top:40px which caused a gap; full-screen overlay starts at 0 */
+  top: 0;
   left: 0;
   width: 100%;
   z-index: 99999;
@@ -63,7 +63,6 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  /* FIX: constrain width so it doesn't overflow on small screens */
   width: calc(100% - 80px);
   max-width: 560px;
 }
@@ -109,7 +108,6 @@ body {
   transition: background 0.15s;
   position: absolute;
   right: 9px;
-  /* FIX: anchor to top so it's always reachable */
   top: 12px;
 }
 
@@ -144,12 +142,11 @@ body {
 
 .hero p {
   margin-top: 17px;
-  color: #65686e;
-  font-size: clamp(14px, 2.5vw, 12px);
+  color: #6b7280;
+  font-size: clamp(10px, 2.5vw, 12px);
   margin-bottom: 36px;
   padding: 0 8px;
   line-height: 1.6;
- 
 }
 
 .hero p:hover {
@@ -160,10 +157,10 @@ body {
 
 /* ─── CONTAINER ─────────────────────────────────────────── */
 .container {
-  /* background: #333232; */
+  background: #333232;
   padding: 5px;
   border-radius: 30px;
-  /* box-shadow: 0 15px 35px rgba(0,0,0,0.35); */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
   width: 100%;
 }
 
@@ -175,19 +172,17 @@ body {
   text-align: center;
   color: white;
   position: relative;
-  background: linear-gradient(76deg, #25242536 0%, #636363 100%);
+  background: linear-gradient(76deg, #252425 0%, #636363 100%);
   box-shadow:
-    /* 0 8px 30px rgba(0,0,0,0.4), */
+    0 8px 30px rgba(0,0,0,0.4),
     inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .card h2 {
-  font-size: clamp(23px, 5vw, 32px);
-  font-weight: 700;
+  font-size: clamp(18px, 5vw, 32px);
+  font-weight: 400;
   margin-bottom: 10px;
-  background: linear-gradient(1deg, #ffffff 0%, #888282 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: #ffffffd4;
 }
 
 .card > p {
@@ -199,14 +194,19 @@ body {
   font-weight: 200;
 }
 
-/* ─── INPUT ─────────────────────────────────────────────── */
+/* ─── INPUT BOX ─────────────────────────────────────────── */
 .input-box {
-  position: relative;
   width: min(350px, 100%);
   margin: auto;
 }
 
-.input-box input {
+/* ─── INPUT WRAP (anchors arrow independently of errorMsg) ─ */
+.input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.input-wrap input {
   width: 100%;
   padding: 14px 60px 14px 25px;
   border-radius: 40px;
@@ -220,7 +220,7 @@ body {
   font-weight: 200;
 }
 
-.input-box input::placeholder {
+.input-wrap input::placeholder {
   color: #ffffff9e;
 }
 
@@ -237,8 +237,7 @@ body {
 /* ─── ARROW BUTTON ──────────────────────────────────────── */
 .arrow {
   position: absolute;
-  right: 4px;
-  /* FIX: align to the input field itself, not the whole .input-box which includes errorMsg */
+  right: 5px;
   top: 6px;
   width: 34px;
   height: 34px;
@@ -255,7 +254,6 @@ body {
 
 .arrow:hover {
   box-shadow: 0 6px 14px rgba(0,0,0,0.35);
-  /* FIX: removed translateY(-50%) scale since top is now static */
   transform: scale(1.08);
 }
 
@@ -312,7 +310,11 @@ body {
   text-align: center;
   font-size: clamp(8px, 2vw, 9px);
   color: #ffffff94;
-  font-weight: 200;
+  font-weight: 100;
+}
+
+.footer strong {
+  color: #e5e7ebb8;
 }
 
 .footer:hover {
@@ -367,7 +369,6 @@ body {
 ════════════════════════════════════════════════════════ */
 @media (max-width: 479px) {
   body {
-    /* FIX: use flex centering instead of absolute positioning on short viewports */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -376,7 +377,6 @@ body {
   }
 
   .main_content {
-    /* FIX: switch from absolute centering to normal flow on mobile */
     position: relative;
     top: auto;
     left: auto;
@@ -412,7 +412,7 @@ body {
     font-size: 17px;
   }
 
-  .input-box input {
+  .input-wrap input {
     padding: 13px 40px 13px 17px;
     font-size: 11px;
   }
@@ -420,8 +420,7 @@ body {
   .arrow {
     width: 28px;
     height: 28px;
-    top: 7px;
-     right: 7px;
+    top: 8px;
   }
 
   .av1 { width: 30px; height: 30px; border-width: 2px; margin-right: -10px; margin-bottom: 6px; display: none; }
@@ -434,7 +433,6 @@ body {
     bottom: -18px;
   }
 
-  /* FIX: was bottom:-25% which pushed footer off-screen */
   .footer {
     bottom: 2% !important;
   }
@@ -458,7 +456,6 @@ body {
 
 /* ════════════════════════════════════════════════════════
    SHORT VIEWPORTS (landscape phones, small tablets)
-   Prevent card from overflowing when height < 500px
 ════════════════════════════════════════════════════════ */
 @media (max-height: 500px) {
   .main_content {
@@ -526,7 +523,7 @@ body {
 
   <!-- HERO -->
   <div class="hero">
-    <h1><img src="images/Bliend_w_logo_header.svg" alt="Bliend" id="logo"></h1>
+    <h1><img src="images/Bliend_w_logo_header.svg" alt="Bliend_logo" id="logo"></h1>
     <p>Experience. Explore. Evolve</p>
   </div>
 
@@ -538,28 +535,30 @@ body {
       <p>Let your unseen become undeniable.</p>
 
       <div class="input-box">
-        <input
-          type="email"
-          id="email"
-          placeholder="youremail@address.com"
-          required
-          autocomplete="off"
-        />
+        <div class="input-wrap">
+          <input
+            type="email"
+            id="email"
+            placeholder="youremail@address.com"
+            required
+            autocomplete="off"
+          />
+          <button class="arrow" id="submit" aria-label="Submit email">
+            <img src="images/down-arrow.svg"
+                 alt="Submit button"
+                 style="width:12px;height:12px;transform:rotate(358deg);margin-left: 4px;">
+          </button>
+        </div>
         <p id="errorMsg"></p>
-        <button class="arrow" id="submit" aria-label="Submit email">
-          <img src="images/down-arrow.png"
-               alt="Submit"
-               style="width:16px;height:16px;transform:rotate(180deg);">
-        </button>
       </div>
 
       <!-- OVERLAPPING AVATARS -->
       <div class="avatars">
-        <img src="images/image_1.jpg"      alt="Team member" class="av1" id="av1">
-        <img src="images/image_2_2.jpg"    alt="Team member" class="av2" id="av2">
-        <img src="images/center_image.jpg" alt="Team member" class="av3" id="av3">
-        <img src="images/image_4.jpg"      alt="Team member" class="av4" id="av4">
-        <img src="images/image_5_1.jpg"    alt="Team member" class="av5" id="av5">
+        <img src="images/image_1.jpg"      alt="Bliend Team member" class="av1" id="av1">
+        <img src="images/image_2_2.jpg"    alt="Bliend Team member" class="av2" id="av2">
+        <img src="images/center_image.jpg" alt="Bliend Team member" class="av3" id="av3">
+        <img src="images/image_4.jpg"      alt="Bliend Team member" class="av4" id="av4">
+        <img src="images/image_5_1.jpg"    alt="Bliend Team member" class="av5" id="av5">
       </div>
 
     </div>
@@ -569,7 +568,7 @@ body {
 
 <!-- FOOTER -->
 <footer class="footer">
-  © 2026 Powered by Bliend All Rights Reserved
+  © 2026 Powered by <strong>Bliend</strong>. All Rights Reserved
 </footer>
 
 <script>
