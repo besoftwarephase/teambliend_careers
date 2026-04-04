@@ -586,16 +586,38 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // ----------------------
 // SUBMIT VALIDATION
 // ----------------------
-submitBtn.addEventListener("click", function(e){
+// submitBtn.addEventListener("click", function(e){
+//   e.preventDefault();
+//   const email = emailInput.value.trim();
+//   if(email === ""){
+//     errorMsg.textContent = "Email field cannot be empty";
+//     emailInput.style.border = "2px solid #e45153";
+//     emailInput.focus();
+//     return;
+//   }
+//   if(!emailRegex.test(email)){
+//     errorMsg.textContent = "Please enter a valid email address";
+//     emailInput.style.border = "2px solid #e45153";
+//     emailInput.focus();
+//     return;
+//   }
+//   localStorage.setItem("userEmail", email);
+//   errorMsg.style.color = "green";
+//   errorMsg.textContent = "Email stored successfully!";
+//   emailInput.style.border = "2px solid green";
+//   window.location.href = "career.html";
+// });
+
+function handleEmailSubmit(e) {
   e.preventDefault();
   const email = emailInput.value.trim();
-  if(email === ""){
+  if (email === "") {
     errorMsg.textContent = "Email field cannot be empty";
     emailInput.style.border = "2px solid #e45153";
     emailInput.focus();
     return;
   }
-  if(!emailRegex.test(email)){
+  if (!emailRegex.test(email)) {
     errorMsg.textContent = "Please enter a valid email address";
     emailInput.style.border = "2px solid #e45153";
     emailInput.focus();
@@ -606,6 +628,12 @@ submitBtn.addEventListener("click", function(e){
   errorMsg.textContent = "Email stored successfully!";
   emailInput.style.border = "2px solid green";
   window.location.href = "career.html";
+}
+
+submitBtn.addEventListener("click", handleEmailSubmit);
+
+emailInput.addEventListener("keydown", function (e) {
+  if (e.key === "Enter") handleEmailSubmit(e);
 });
 
 // ----------------------
