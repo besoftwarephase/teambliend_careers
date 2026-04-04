@@ -103,7 +103,7 @@ function uploadToCloudinary(buffer, ext) {
 
   const timeoutPromise = new Promise((_, reject) =>
     setTimeout(
-      () => reject(new Error(`Cloudinary upload timed out after ${FILE_CONFIG.UPLOAD_TIMEOUT / 1000}s`)),
+      () => reject(new Error(`Cloudinary upload timed out after ${FILE_CONFIG.UPLOAD_TIMEOUT / 3000}s`)),
       FILE_CONFIG.UPLOAD_TIMEOUT
     )
   );
