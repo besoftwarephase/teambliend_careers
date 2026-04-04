@@ -422,7 +422,7 @@ function validateStep3() {
             alert("Only PDF / DOC / DOCX files are allowed");
             q_8.value = "";
             isValid = false;
-        } else if (file.size > 5 * 1024 * 1024) {
+        } else if (file.size > 25 * 1024 * 1024) {
             alert("Max file size is 5 MB");
             q_8.value = "";
             isValid = false;
