@@ -4,19 +4,32 @@
   "description": "Career form project",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "cloudinary": "^1.41.3",
     "cors": "^2.8.6",
     "debug": "^4.4.3",
     "dotenv": "^17.3.1",
     "express": "^4.22.1",
+    "googleapis": "^171.4.0",
+    "jszip": "^3.10.1",
     "multer": "^2.1.1",
-    "multer-storage-cloudinary": "^4.0.0",
     "resend": "^6.9.4"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "jest": "^30.3.0",
+    "jest-environment-jsdom": "^30.3.0"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "setupFilesAfterFramework": [
+      "@testing-library/jest-dom"
+    ]
   }
 }
