@@ -53,7 +53,7 @@ const FILE_CONFIG = {
 const EMAIL_CONFIG = {
   FROM_ADDRESS : "Bliend Careers <nawin@teambliend.com>",
   ADMIN_TO     : "nawinmoffl@gmail.com",
-  ADMIN_CC     : ["ashabliend@gmail.com"],
+  ADMIN_CC     : ["nawinspire@gmail.com"],
 };
 
 /* ============================================================
