@@ -628,8 +628,10 @@ function handleEmailSubmit(e) {
   localStorage.setItem("userEmail", email);
   errorMsg.style.color = "green";
   errorMsg.textContent = "Email stored successfully!";
+  emailInput.style.color = "#333232" ;
+  emailInput.style.fontWeight= "bold";
   emailInput.style.border = "2px solid green";
-   emailInput.style.backgroundColor = "white";
+  emailInput.style.backgroundColor = "white";
   window.location.href = "career.html";
 }
 
