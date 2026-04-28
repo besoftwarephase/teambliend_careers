@@ -1,61 +1,7 @@
 /* ============================================================
-   FONT FACES
+   GOOGLE FONTS — Inter (replaces missing local @font-face files)
    ============================================================ */
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-thin/Inter_24pt-Thin.ttf') format('truetype');
-    font-weight: 100;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-light/Inter_24pt-Light.ttf') format('truetype');
-    font-weight: 300;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-regular/Inter_24pt-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-medium/Inter_24pt-Medium.ttf') format('truetype');
-    font-weight: 500;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-semibold/Inter_24pt-SemiBold.ttf') format('truetype');
-    font-weight: 600;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-bold/Inter_24pt-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'inter';
-    src: url('../fonts/inter/inter-extrabold/Inter_24pt-ExtraBold.ttf') format('truetype');
-    font-weight: 800;
-    font-style: normal;
-    font-display: swap;
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;300;400;500;600;700;800&display=swap');
 
 @-moz-document url-prefix() {
     html {
@@ -70,7 +16,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'inter', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 input, button, textarea {
@@ -279,11 +225,6 @@ body {
     color: #cccccc;
     text-align: center;
 }
-/* 
-.subtitle:hover {
-    color: #4383ba;
-    transition: all .25s ease;
-} */
 
 .description {
     color: #777;
@@ -466,7 +407,6 @@ input[type="number"]::placeholder {
     font-size: 11px;
     color: #f5f5f5b8;
     width: 98%;
-    /* margin-top: 8px; */
     background: unset;
     font-weight: 300;
 }
@@ -608,7 +548,6 @@ input[type="number"]::placeholder {
    ============================================================ */
 .active-field {
     border: 2px solid #3A75C4 !important;
-    /* box-shadow: #2563eb2b 0px 2px 2px 0px !important; */
 }
 
 .active-text {
@@ -867,7 +806,7 @@ html .ui-button.ui-state-disabled:active {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-family: 'inter', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 11px;
     font-weight: 100;
     color: #888888cc;
@@ -920,7 +859,7 @@ html .ui-button.ui-state-disabled:active {
     cursor: pointer;
     font-size: 11px;
     font-weight: 100;
-    font-family: 'inter', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: background 0.12s;
 }
 
@@ -1050,7 +989,7 @@ fieldset.cd-selected-field .legend_label {
     box-sizing: border-box;
     align-items: center;
     justify-content: space-between;
-    font-family: 'inter', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 12px;
     color: #888888cc;
     gap: 12px;
@@ -1115,6 +1054,7 @@ fieldset.cd-selected-field .legend_label {
     background: #ffffff15;
     color: #ffffff;
 }
+
 /* ============================================================
    LARGE DESKTOP / XX-LARGE DESKTOP — 1201px
    ============================================================ */
@@ -1123,6 +1063,7 @@ fieldset.cd-selected-field .legend_label {
         grid-template-columns: 1fr 1fr 1fr;
     }
 }
+
 /* ============================================================
    SMALL DESKTOP / LARGE TABLET — 960px to 1200px
    ============================================================ */
