@@ -88,8 +88,8 @@ body {
     position: relative;
     min-height: 100vh;
     min-width: 960px;
-    overflow-x: scroll;
-    overflow-y: hidden;
+    overflow-x: hidden;
+    overflow-y: scroll;
     scrollbar-width: none;
     user-select: none
 }
