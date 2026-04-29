@@ -103,6 +103,15 @@ function setMenuState(index, state) {
     }
 }
 
+/* Scroll the form content area back to the top on every step change */
+function scrollToTop() {
+    var formContent = document.querySelector(".form_content");
+    if (formContent) {
+        formContent.scrollTo({ top: 0, behavior: "smooth" });
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 
 /* ============================================================
  *  FIELD UX — highlight & focus behaviour
@@ -122,11 +131,11 @@ document.querySelectorAll(".highlight_text").forEach(function (field) {
             const errorexp      = container.querySelector(".s3-err-exp_wrapper");
             const errorsalary   = container.querySelector(".salary-err");
             const errorlocation = container.querySelector(".s3-err-work_location_wrapper");
-            if (errorBox)    errorBox.style.display = "none";
-            if (errorText)   errorText.innerText    = "";
-            if (errorinline) errorinline.innerText  = "";
-            if (errorexp)    errorexp.innerText     = "";
-            if (errorsalary) errorsalary.innerText  = "";
+            if (errorBox)      errorBox.style.display  = "none";
+            if (errorText)     errorText.innerText     = "";
+            if (errorinline)   errorinline.innerText   = "";
+            if (errorexp)      errorexp.innerText      = "";
+            if (errorsalary)   errorsalary.innerText   = "";
             if (errorlocation) errorlocation.innerText = "";
         }
     });
@@ -223,7 +232,6 @@ const MAX_FILE_BYTES           = 30 * 1024 * 1024;  // 30 MB hard cap
 
 /**
  * Lazily load pdf-lib from CDN (only when actually needed).
- * Returns the PDFDocument class.
  */
 async function loadPdfLib() {
     if (window.PDFLib) return window.PDFLib;
@@ -239,15 +247,7 @@ async function loadPdfLib() {
 
 /**
  * Compress a PDF File object using pdf-lib.
- *
- * Strategy:
- *  - Reload the PDF through pdf-lib (re-serialises and deduplicates objects)
- *  - Strip document-level metadata (Title, Author, Creator, Producer, etc.)
- *  - Save with objectsPerTick = 50 for deterministic, compact output
- *
- * This typically achieves 10–40 % reduction on text-heavy PDFs.
- * Image-heavy PDFs may see less reduction because pixel data is
- * already compressed inside the PDF stream.
+ * Strips metadata and re-serialises with compact settings.
  *
  * @param {File} file – Original PDF File object
  * @returns {Promise<File>} – Compressed File object (same name/type)
@@ -255,17 +255,13 @@ async function loadPdfLib() {
 async function compressPDF(file) {
     const PDFLib = await loadPdfLib();
 
-    /* Read original bytes */
     const originalBuffer = await file.arrayBuffer();
 
-    /* Load into pdf-lib */
     const pdfDoc = await PDFLib.PDFDocument.load(originalBuffer, {
-        // Ignore minor spec violations common in real-world PDFs
         ignoreEncryption: false,
         updateMetadata  : false,
     });
 
-    /* Strip all standard metadata to save space */
     pdfDoc.setTitle("");
     pdfDoc.setAuthor("");
     pdfDoc.setSubject("");
@@ -275,9 +271,8 @@ async function compressPDF(file) {
     pdfDoc.setCreationDate(new Date(0));
     pdfDoc.setModificationDate(new Date(0));
 
-    /* Re-serialise with compact settings */
     const compressedBytes = await pdfDoc.save({
-        useObjectStreams: true,   // pack indirect objects into streams (smaller)
+        useObjectStreams: true,
         addDefaultPage : false,
         objectsPerTick : 50,
     });
@@ -298,12 +293,6 @@ async function compressPDF(file) {
 /**
  * Main entry point — compress the file only when needed.
  *
- * Rules:
- *  - File ≤ 5 MB  → return as-is (no processing needed)
- *  - File > 5 MB, is PDF  → compress with pdf-lib
- *  - File > 5 MB, is DOC/DOCX  → return as-is (cannot compress in browser;
- *      server enforces the 30 MB cap)
- *
  * @param {File} file – The resume file chosen by the user
  * @returns {Promise<File>} – Original or compressed File
  */
@@ -317,7 +306,6 @@ async function compressFileIfNeeded(file) {
                   file.name.toLowerCase().endsWith(".pdf");
 
     if (!isPDF) {
-        /* DOC / DOCX — cannot be compressed in the browser */
         const mb = (file.size / 1024 / 1024).toFixed(2);
         console.warn(`⚠️ Non-PDF file is ${mb} MB — passed through without compression`);
         return file;
@@ -328,7 +316,6 @@ async function compressFileIfNeeded(file) {
     try {
         const compressed = await compressPDF(file);
 
-        /* Safety check: if compression somehow made it larger, use original */
         if (compressed.size >= file.size) {
             console.warn("⚠️ Compressed PDF is not smaller — using original");
             return file;
@@ -337,7 +324,6 @@ async function compressFileIfNeeded(file) {
         return compressed;
     } catch (err) {
         console.error("❌ PDF compression failed — uploading original:", err.message);
-        /* Graceful fallback: attempt upload with original file */
         return file;
     }
 }
@@ -418,7 +404,7 @@ function validateStep1() {
         clearFieldError("fieldset_location", "location_error");
     }
 
-    // Describe
+    // Describe yourself
     const describeField = document.getElementById("describe_field");
     if (!describe.value.trim()) {
         describeField.style.setProperty("border-color", "#ff4d4f", "important");
@@ -434,19 +420,35 @@ function validateStep1() {
         setMenuState(0, "completed");
         setCircleState(1, "active");
         setMenuState(1, "active");
+        scrollToTop();
     }
 }
 
 function validateStep2() {
     let isValid = true;
 
-    [q_1, q_2, q_3].forEach(function (field) {
-        if (!field) return;
-        if (!field.value.trim()) {
-            field.style.setProperty("border-color", "#ff4d4f", "important");
+    // FIX: Each field now shows its individual error message box, not just a red border
+    const step2Fields = [
+        { field: q_1, errorBoxId: "q1_error_box", errorMsgId: "q1_error" },
+        { field: q_2, errorBoxId: "q2_error_box", errorMsgId: "q2_error" },
+        { field: q_3, errorBoxId: "q3_error_box", errorMsgId: "q3_error" },
+    ];
+
+    step2Fields.forEach(function (item) {
+        if (!item.field) return;
+
+        const errorBox = document.getElementById(item.errorBoxId);
+        const errorMsg = document.getElementById(item.errorMsgId);
+
+        if (!item.field.value.trim()) {
+            item.field.style.setProperty("border-color", "#ff4d4f", "important");
+            if (errorBox) errorBox.style.display = "block";
+            if (errorMsg) errorMsg.innerText = "This field is required";
             isValid = false;
         } else {
-            field.style.removeProperty("border-color");
+            item.field.style.removeProperty("border-color");
+            if (errorBox) errorBox.style.display = "none";
+            if (errorMsg) errorMsg.innerText = "";
         }
     });
 
@@ -457,6 +459,7 @@ function validateStep2() {
         setMenuState(1, "completed");
         setCircleState(2, "active");
         setMenuState(2, "active");
+        scrollToTop();
     }
 }
 
@@ -542,10 +545,13 @@ function validateStep3() {
         isValid = false;
     } else {
         const file         = q_8.files[0];
-        const allowedTypes = ["application/pdf", "application/msword",
-                              "application/vnd.openxmlformats-officedocument.wordprocessingml.document"];
-        const allowedExts  = ["pdf", "doc", "docx"];
-        const fileExt      = file.name.toLowerCase().split(".").pop();
+        const allowedTypes = [
+            "application/pdf",
+            "application/msword",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        ];
+        const allowedExts = ["pdf", "doc", "docx"];
+        const fileExt     = file.name.toLowerCase().split(".").pop();
 
         q_8.style.removeProperty("border-color");
         if (resumeErrorBox) resumeErrorBox.style.display = "none";
@@ -580,17 +586,18 @@ function validateStep3() {
     setMenuState(2, "completed");
     showLoader();
 
-    /* Kick off compression asynchronously, then submit */
     (async function () {
         let resumeFile = q_8.files[0];
 
         try {
             resumeFile = await compressFileIfNeeded(resumeFile);
         } catch (err) {
-            /* compressFileIfNeeded already falls back internally; this is
-               a last-resort guard so submission still proceeds. */
             console.error("Compression pipeline error — using original file:", err.message);
         }
+
+        // FIX: selectedWorkLocation resolved here (inside the async scope) to
+        // guarantee it reads the current DOM value at submission time
+        const resolvedWorkLocation = (document.getElementById("work_location") || {}).value || "";
 
         const fd = new FormData();
         fd.append("name",            fullName.value.trim());
@@ -603,13 +610,13 @@ function validateStep3() {
         fd.append("q_1",             q_1.value.trim());
         fd.append("q_2",             q_2.value.trim());
         fd.append("q_3",             q_3.value.trim());
-        fd.append("preferred_role",  q_5  ? q_5.value.trim()                                      : "");
-        fd.append("experience",      exp  ? exp.value.trim()                                       : "");
-        fd.append("expected_salary", q_6  ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN")    : "");
-        fd.append("joining_date",    q_7  ? q_7.value.trim()                                       : "");
-        fd.append("work_location",   selectedWorkLocation);
-        fd.append("resume",          resumeFile);   // ← compressed or original
-        fd.append("message",         q_9  ? q_9.value.trim()                                       : "");
+        fd.append("preferred_role",  q_5  ? q_5.value.trim()                                   : "");
+        fd.append("experience",      exp  ? exp.value.trim()                                    : "");
+        fd.append("expected_salary", q_6  ? "₹ " + parseInt(q_6.value).toLocaleString("en-IN") : "");
+        fd.append("joining_date",    q_7  ? q_7.value.trim()                                    : "");
+        fd.append("work_location",   resolvedWorkLocation);
+        fd.append("resume",          resumeFile);
+        fd.append("message",         q_9  ? q_9.value.trim()                                    : "");
 
         fetch("/submit", { method: "POST", body: fd })
             .then(async function (res) {
@@ -677,7 +684,7 @@ $(function () {
             }, 1);
         },
 
-        onClose: function (dateText, inst) {
+        onClose: function () {
             $(this).css("border-color", "#80797961");
         }
     });
@@ -699,6 +706,7 @@ document.addEventListener("DOMContentLoaded", function () {
             setMenuState(1, "disabled");
             setCircleState(0, "active");
             setMenuState(0, "active");
+            scrollToTop();
         });
     }
 
@@ -711,6 +719,7 @@ document.addEventListener("DOMContentLoaded", function () {
             setMenuState(2, "disabled");
             setCircleState(1, "active");
             setMenuState(1, "active");
+            scrollToTop();
         });
     }
 
@@ -734,16 +743,3 @@ document.addEventListener("DOMContentLoaded", function () {
     if (profileImg)   profileImg.textContent   = firstLetter;
     if (mobileIcon)   mobileIcon.textContent   = firstLetter;
 })();
-
-const resumeInput   = document.getElementById("resume_file");
-const resumeWrapper = resumeInput?.closest(".input_field") || resumeInput?.parentElement;
-
-if (resumeInput && resumeWrapper) {
-    resumeInput.addEventListener("focus", function () {
-        resumeWrapper.style.borderColor = "2px solid red";
-    });
-
-    resumeInput.addEventListener("blur", function () {
-        resumeWrapper.style.borderColor = "";
-    });
-}
