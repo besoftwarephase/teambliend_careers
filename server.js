@@ -1,5 +1,5 @@
 /* ============================================================
- *  server.js  –  Uway Careers Application Backend
+ *  server.js  –  Bliend Careers Application Backend
  *  Stack : Express · Multer · Google Drive · Resend · JSZip
  * ============================================================ */
 
@@ -11,7 +11,6 @@ const path     = require("path");
 const express  = require("express");
 const cors     = require("cors");
 const multer   = require("multer");
-const rateLimit = require("express-rate-limit");
 const { Readable } = require("stream");
 
 const { Resend }       = require("resend");
@@ -53,7 +52,7 @@ const FILE_CONFIG = {
 
 const EMAIL_CONFIG = {
   FROM_ADDRESS : "Uway Careers <contact@uway.in>",
-  ADMIN_TO     : ["contact@uway.in", "ashabliend@gmail.com"],
+  ADMIN_TO     : ["contact@uway.in","ashabliend@gmail.com"],
   ADMIN_CC     : ["nawinmbliend@gmail.com"],
 };
 
@@ -72,7 +71,7 @@ const upload = multer({
 });
 
 /* ============================================================
- *  3. FILE COMPRESSION
+ *  3. FILE COMPRESSION  (unchanged)
  * ============================================================ */
 
 async function compressDocxBuffer(buffer, ext) {
@@ -85,10 +84,10 @@ async function compressDocxBuffer(buffer, ext) {
     });
     const before = (buffer.length     / 1024 / 1024).toFixed(2);
     const after  = (compressed.length / 1024 / 1024).toFixed(2);
-    console.log(`DOCX compressed: ${before} MB → ${after} MB`);
+    console.log(`📦  DOCX compressed: ${before} MB → ${after} MB`);
     return compressed.length < buffer.length ? compressed : buffer;
   } catch (err) {
-    console.warn(`Cannot parse ${ext} as ZIP (legacy .doc?) — skipping:`, err.message);
+    console.warn(`⚠️  Cannot parse ${ext} as ZIP (legacy .doc?) — skipping:`, err.message);
     return buffer;
   }
 }
@@ -97,7 +96,7 @@ async function compressFileBuffer(buffer, mimetype, ext) {
   const sizeMB = (buffer.length / 1024 / 1024).toFixed(2);
 
   if (buffer.length <= FILE_CONFIG.COMPRESS_THRESHOLD) {
-    console.log(`File ${sizeMB} MB — no server compression needed`);
+    console.log(`✅  File ${sizeMB} MB — no server compression needed`);
     return buffer;
   }
 
@@ -105,18 +104,24 @@ async function compressFileBuffer(buffer, mimetype, ext) {
   const isDoc  = mimetype === "application/msword" || ext === "doc";
 
   if (isDocx || isDoc) {
-    console.log(`${ext.toUpperCase()} is ${sizeMB} MB — compressing…`);
+    console.log(`🔄  ${ext.toUpperCase()} is ${sizeMB} MB — compressing…`);
     return compressDocxBuffer(buffer, ext);
   }
 
-  console.log(`PDF ${sizeMB} MB — forwarding as-is`);
+  console.log(`ℹ️   PDF ${sizeMB} MB — forwarding as-is`);
   return buffer;
 }
 
 /* ============================================================
  *  4. GOOGLE DRIVE UPLOAD
+ *     Replaces uploadToCloudinary completely
  * ============================================================ */
 
+/**
+ * Returns an authenticated Google Drive client using OAuth2
+ * credentials tied to the personal Google account (besoftwarephase@gmail.com).
+ * This uses the account's own Drive storage quota — no service account quota issues.
+ */
 function getDriveClient() {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_OAUTH_CLIENT_ID,
@@ -132,6 +137,12 @@ function getDriveClient() {
 /**
  * Uploads a buffer to Google Drive (Career_Resumes folder) and returns
  * a permanent shareable view link for use in the admin email.
+ *
+ * Flow:
+ *   1. Upload file to the Career_Resumes folder
+ *   2. Set permission to "anyone with link can view"
+ *      → HR can open without logging in
+ *   3. Return the webViewLink (never expires)
  *
  * @param {Buffer} buffer
  * @param {string} ext
@@ -173,8 +184,8 @@ async function uploadToGoogleDrive(buffer, ext, candidateName) {
     },
   });
 
-  console.log(`Google Drive upload done — file: ${fileName}`);
-  console.log(`Drive link: ${response.data.webViewLink}`);
+  console.log(`☁️   Google Drive upload done — file: ${fileName}`);
+  console.log(`🔗  Drive link: ${response.data.webViewLink}`);
 
   return {
     fileId,
@@ -204,6 +215,11 @@ function buildAdminEmailHTML(data, driveUrl, attachedDirectly) {
       ${title}
     </h3>`;
 
+  /*
+   * Resume block:
+   *   Small file → attached to email + Drive link shown
+   *   Large file → Google Drive button only (no expiry ever)
+   */
   const resumeSection = attachedDirectly
     ? `<p style="font-size:13px;color:#374151;margin:0 0 12px">
          📎 Resume is attached to this email.
@@ -226,7 +242,7 @@ function buildAdminEmailHTML(data, driveUrl, attachedDirectly) {
     <div style="font-family:sans-serif;max-width:640px;margin:auto;
                 border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
 
-      <div style="background:#4F46E5;padding:24px 32px">
+      <div style="background:#3A75C4;padding:24px 32px">
         <h2 style="color:#fff;margin:0;font-size:20px">Candidate Job Application</h2>
         <p style="color:#c7d2fe;margin:6px 0 0;font-size:13px">Received On: ${receivedAt}</p>
       </div>
@@ -244,11 +260,11 @@ function buildAdminEmailHTML(data, driveUrl, attachedDirectly) {
           ${row("About Candidate", data.describe)}
         </table>
 
-        ${section("Questions &amp; Answers")}
+        ${section("Creative &amp; Logical Thinking")}
         <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
-          ${row("1. What are you becoming through your regular activities?",                                                data.q_1, true)}
-          ${row("2. Something most people don't notice about a system/environment you interact with regularly?",            data.q_2)}
-          ${row("3. What did you observe, why did it stand out, and how did you interpret it?",                             data.q_3, true)}
+          ${row("1. Hobbies / personal interests outside of work?",       data.q_1, true)}
+          ${row("2. Most unconventional idea and what made it different?", data.q_2)}
+          ${row("3. Emotion, logic, or attention in a campaign — why?",   data.q_3, true)}
         </table>
 
         ${section("Open Position &amp; Final Details")}
@@ -313,7 +329,67 @@ function buildCandidateEmailHTML(data) {
 }
 
 /* ============================================================
- *  6. VALIDATION
+ *  6. EMAIL SERVICE
+ * ============================================================ */
+
+/**
+ * Sends admin + candidate emails.
+ *
+ * Attachment decision (after compression):
+ *   <= 25 MB  →  attach file directly + include Drive link in email
+ *   >  25 MB  →  embed Google Drive link only (no attachment)
+ */
+async function sendApplicationEmails(data, compressedBuffer, ext, driveUrl) {
+  console.log(`📧  Sending emails for: ${data.name} <${data.email}>`);
+
+  const fileSizeMB       = (compressedBuffer.length / 1024 / 1024).toFixed(2);
+  const attachedDirectly = compressedBuffer.length <= FILE_CONFIG.ATTACH_MAX_BYTES;
+
+  console.log(
+    attachedDirectly
+      ? `📎  Attaching directly (${fileSizeMB} MB) + Drive link`
+      : `🔗  Too large (${fileSizeMB} MB) — Drive link only`
+  );
+
+  const adminPayload = {
+    from    : EMAIL_CONFIG.FROM_ADDRESS,
+    to      : EMAIL_CONFIG.ADMIN_TO,
+    cc      : EMAIL_CONFIG.ADMIN_CC,
+    subject : `New Candidate – ${data.name} | ${data.preferred_role}`,
+    html    : buildAdminEmailHTML(data, driveUrl, attachedDirectly),
+  };
+
+  if (attachedDirectly) {
+    adminPayload.attachments = [{
+      filename : `${data.name}_Resume.${ext}`,
+      content  : compressedBuffer.toString("base64"),
+      encoding : "base64",
+    }];
+  }
+
+  try {
+    const [adminResult, userResult] = await Promise.all([
+      resend.emails.send(adminPayload),
+      resend.emails.send({
+        from    : EMAIL_CONFIG.FROM_ADDRESS,
+        to      : data.email,
+        subject : "Your application has been received – Uway",
+        html    : buildCandidateEmailHTML(data),
+      }),
+    ]);
+
+    if (adminResult.data?.id) console.log("✅  Admin email sent     – ID:", adminResult.data.id);
+    if (userResult.data?.id)  console.log("✅  Candidate email sent – ID:", userResult.data.id);
+    if (adminResult.error)    console.error("❌  Admin email error:", adminResult.error);
+    if (userResult.error)     console.error("❌  Candidate email error:", userResult.error);
+
+  } catch (err) {
+    console.error("❌  EMAIL SEND FAILED:", err.message);
+  }
+}
+
+/* ============================================================
+ *  7. VALIDATION
  * ============================================================ */
 
 const REQUIRED_FIELDS = ["name", "email", "phone", "preferred_role"];
@@ -323,23 +399,6 @@ function findMissingField(body) {
     (f) => !body[f] || !body[f].toString().trim()
   ) ?? null;
 }
-
-/* ============================================================
- *  7. RATE LIMITER
- * ============================================================ */
-
-const submitLimiter = rateLimit({
-  windowMs : 15 * 60 * 1000,  // 15 minutes
-  max      : 5,               // max 5 submissions per IP per window
-  standardHeaders: true,
-  legacyHeaders  : false,
-  handler(_req, res) {
-    res.status(429).json({
-      status : "FAILED",
-      error  : "Too many submissions. Please wait 15 minutes before trying again.",
-    });
-  },
-});
 
 /* ============================================================
  *  8. EXPRESS APP
@@ -359,7 +418,7 @@ app.get("/health", (_req, res) =>
 );
 
 /* ── POST /submit ─────────────────────────────────────────── */
-app.post("/submit", submitLimiter, upload.single("resume"), async (req, res) => {
+app.post("/submit", upload.single("resume"), async (req, res) => {
   try {
     const fileSizeMB = req.file ? (req.file.size / 1024 / 1024).toFixed(2) : "—";
     console.log(`📥  Submission: ${req.body?.name} | ${req.file?.originalname} (${fileSizeMB} MB)`);
@@ -373,14 +432,6 @@ app.post("/submit", submitLimiter, upload.single("resume"), async (req, res) => 
       return res.status(400).json({ status: "FAILED", error: `Missing required field: ${missingField}` });
     }
 
-    // FIX: Resolve ext with fallback — prevents "undefined" extension if MIME is unrecognised
-    const ext = FILE_CONFIG.MIMETYPE_TO_EXT[req.file.mimetype]
-      ?? req.file.originalname.split(".").pop().toLowerCase()
-      ?? "pdf";
-
-    const rawBuffer = req.file.buffer;
-    const bodyData  = req.body;
-
     /* Respond to client immediately */
     res.status(200).json({
       status  : "SUCCESS",
@@ -388,18 +439,21 @@ app.post("/submit", submitLimiter, upload.single("resume"), async (req, res) => 
     });
 
     /* Send candidate confirmation email IMMEDIATELY — no file needed */
-    // FIX: subject now says "Uway" instead of "Bliend"
     resend.emails.send({
       from    : EMAIL_CONFIG.FROM_ADDRESS,
-      to      : bodyData.email,
+      to      : req.body.email,
       subject : "Your application has been received – Uway",
-      html    : buildCandidateEmailHTML(bodyData),
+      html    : buildCandidateEmailHTML(req.body),
     }).then(result => {
       if (result.data?.id) console.log("✅  Candidate email sent – ID:", result.data.id);
       if (result.error)    console.error("❌  Candidate email error:", result.error);
     }).catch(err => console.error("❌  Candidate email failed:", err.message));
 
-    /* Background pipeline: compress → upload to Drive → admin email */
+    /* Background pipeline: compress → upload to Drive → admin email only */
+    const ext       = FILE_CONFIG.MIMETYPE_TO_EXT[req.file.mimetype];
+    const rawBuffer = req.file.buffer;
+    const bodyData  = req.body;
+
     (async () => {
       try {
         /* Step 1: Compress if needed */
@@ -410,14 +464,14 @@ app.post("/submit", submitLimiter, upload.single("resume"), async (req, res) => 
         const { driveUrl } = await uploadToGoogleDrive(compressedBuffer, ext, bodyData.name);
         console.log("✅  Google Drive upload done — link ready");
 
-        /* Step 3: Admin email — attach or link based on compressed size */
-        const finalSizeMB      = (compressedBuffer.length / 1024 / 1024).toFixed(2);
+        /* Step 3: Admin email only — attach or link based on compressed size */
+        const fileSizeMB       = (compressedBuffer.length / 1024 / 1024).toFixed(2);
         const attachedDirectly = compressedBuffer.length <= FILE_CONFIG.ATTACH_MAX_BYTES;
 
         console.log(
           attachedDirectly
-            ? `📎  Attaching directly (${finalSizeMB} MB) + Drive link`
-            : `🔗  Too large (${finalSizeMB} MB) — Drive link only`
+            ? `📎  Attaching directly (${fileSizeMB} MB) + Drive link`
+            : `🔗  Too large (${fileSizeMB} MB) — Drive link only`
         );
 
         const adminPayload = {
