@@ -633,8 +633,8 @@ body.no-scroll {
 .footer {
     text-align: center;
     font-size: clamp(8px, 2vw, 9px);
-    color: #514f4ffc;
-    font-weight: 100;
+    color: #b7b3b3fc
+    font-weight: 300;
     margin-bottom: -26px;
     margin-top: 15px;
 }
