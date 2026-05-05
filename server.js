@@ -46,8 +46,8 @@ const FILE_CONFIG = {
 
 const EMAIL_CONFIG = {
   FROM_ADDRESS : "Uway Careers <contact@uway.in>",
-  ADMIN_TO     : ["contact@uway.in", "ashabliend@gmail.com"],
-  ADMIN_CC     : ["nawinmbliend@gmail.com"],
+  ADMIN_TO     : ["contact@uway.in"],
+  ADMIN_CC     : ["uwaycareers@gmail.com","nawinuway@gmail.com"],
 };
 
 /* ============================================================
