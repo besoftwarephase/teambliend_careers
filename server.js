@@ -180,7 +180,7 @@ async function uploadToGoogleDrive(buffer, ext, candidateName) {
 }
 
 /* ============================================================
- *  5. EMAIL TEMPLATES
+ *  5. EMAIL TEMPLATES  (Outlook + dark-mode safe)
  * ============================================================ */
 
 function buildAdminEmailHTML(data, driveUrl) {
@@ -189,103 +189,312 @@ function buildAdminEmailHTML(data, driveUrl) {
     day: "numeric", hour: "2-digit", minute: "2-digit",
   });
 
-  const row = (label, value, shaded = false) => `
-    <tr style="${shaded ? "background:#f0f4ff;" : ""}">
-      <td style="padding:10px 14px;font-weight:600;color:#374151;width:45%">${label}</td>
-      <td style="padding:10px 14px;color:#111827">${value ?? "—"}</td>
+  // bg-color on every <td> (Outlook ignores <tr> backgrounds)
+  // CSS classes let [data-ogsc] and @media overrides re-apply light colors
+  const row = (label, value, shaded = false) => {
+    const bg         = shaded ? "#EEF2FF" : "#FFFFFF";
+    const labelClass = shaded ? "row-label-shaded" : "row-label";
+    const valClass   = shaded ? "row-val-shaded"   : "row-val";
+    return `
+    <tr>
+      <td class="${labelClass}"
+          style="padding:10px 14px;font-weight:600;color:#374151;width:45%;
+                 background-color:${bg};mso-line-height-rule:exactly;">
+        ${label}
+      </td>
+      <td class="${valClass}"
+          style="padding:10px 14px;color:#111827;
+                 background-color:${bg};mso-line-height-rule:exactly;">
+        ${value ?? "—"}
+      </td>
     </tr>`;
+  };
 
   const section = (title) => `
     <h3 style="margin:0 0 12px;font-size:14px;color:#3A75C4;text-transform:uppercase;
-               letter-spacing:0.05em;border-bottom:2px solid #e5e7eb;padding-bottom:6px">
+               letter-spacing:0.05em;border-bottom:2px solid #D1D5DB;padding-bottom:6px;
+               font-family:Arial,sans-serif;mso-line-height-rule:exactly;">
       ${title}
     </h3>`;
 
+  // VML button for Outlook desktop; normal <a> for everything else
   const resumeSection = `
-    <p style="font-size:13px;color:#374151;margin:0 0 8px">
+    <p style="font-size:13px;color:#374151;margin:0 0 8px;font-family:Arial,sans-serif;">
       Click the button below to open the candidate's resume in Google Drive.
     </p>
+    <!--[if mso]>
+    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml"
+                 xmlns:w="urn:schemas-microsoft-com:office:word"
+                 href="${driveUrl}"
+                 style="height:38px;v-text-anchor:middle;width:240px;"
+                 arcsize="10%" strokecolor="#2A5FAE" fillcolor="#3A75C4">
+      <w:anchorlock/>
+      <center style="color:#ffffff;font-family:Arial,sans-serif;font-size:13px;font-weight:bold;">
+        Open Resume in Google Drive
+      </center>
+    </v:roundrect>
+    <![endif]-->
+    <!--[if !mso]><!-->
     <a href="${driveUrl}"
-       style="display:inline-block;padding:10px 20px;background:#3A75C4;color:#fff;
-              border-radius:6px;text-decoration:none;font-size:13px;margin-bottom:24px">
+       style="display:inline-block;padding:10px 20px;background-color:#3A75C4;
+              color:#ffffff;border-radius:6px;text-decoration:none;font-size:13px;
+              font-weight:600;margin-bottom:24px;font-family:Arial,sans-serif;">
        Open Resume in Google Drive
-    </a>`;
+    </a>
+    <!--<![endif]-->`;
 
-  return `
-    <div style="font-family:sans-serif;max-width:640px;margin:auto;
-                border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
-      <div style="background:#3A75C4;padding:24px 32px">
-        <h2 style="color:#fff;margin:0;font-size:20px">Candidate Job Application</h2>
-        <p style="color:#c7d2fe;margin:6px 0 0;font-size:13px">Received On: ${receivedAt}</p>
-      </div>
-      <div style="padding:24px 32px;background:#fff">
-        ${section("Personal Information")}
-        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
-          ${row("Full Name",       data.name,     true)}
-          ${row("Email",           data.email)}
-          ${row("Phone",           data.phone,    true)}
-          ${row("Age",             data.dob)}
-          ${row("Gender",          data.gender,   true)}
-          ${row("Location",        data.location)}
-          ${row("About Candidate", data.describe, true)}
+  return `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <!-- Declare light-only so clients don't auto-invert colours -->
+  <meta name="color-scheme" content="light"/>
+  <meta name="supported-color-schemes" content="light"/>
+  <!--[if mso]>
+  <noscript><xml>
+    <o:OfficeDocumentSettings>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+  </xml></noscript>
+  <![endif]-->
+  <style>
+    /* Block all dark-mode auto-inversion */
+    :root { color-scheme: light only; }
+
+    /* ── Outlook 365 webmail dark mode ────────────────────────
+       New Outlook prefixes class names with data-ogsc in dark mode */
+    [data-ogsc] .row-label,
+    [data-ogsc] .row-val {
+      color: #374151 !important;
+      background-color: #FFFFFF !important;
+    }
+    [data-ogsc] .row-label-shaded,
+    [data-ogsc] .row-val-shaded {
+      color: #374151 !important;
+      background-color: #EEF2FF !important;
+    }
+    [data-ogsc] .email-body   { background-color: #FFFFFF !important; }
+    [data-ogsc] .email-footer {
+      background-color: #F3F4F6 !important;
+      color: #9CA3AF !important;
+    }
+    [data-ogsc] .section-heading { color: #3A75C4 !important; }
+
+    /* ── Apple Mail / iOS Mail dark mode ──────────────────── */
+    @media (prefers-color-scheme: dark) {
+      .row-label,
+      .row-val {
+        color: #374151 !important;
+        background-color: #FFFFFF !important;
+      }
+      .row-label-shaded,
+      .row-val-shaded {
+        color: #374151 !important;
+        background-color: #EEF2FF !important;
+      }
+      .email-body    { background-color: #FFFFFF !important; }
+      .email-footer  { background-color: #F3F4F6 !important; color: #9CA3AF !important; }
+      .section-heading { color: #3A75C4 !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:16px;background-color:#F9FAFB;">
+
+  <!-- Outer wrapper — table layout required for Outlook -->
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#F9FAFB;">
+    <tr>
+      <td align="center">
+
+        <table width="640" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:640px;width:100%;border:1px solid #E5E7EB;
+                      border-radius:10px;background-color:#FFFFFF;">
+
+          <!-- ── HEADER ── -->
+          <tr>
+            <td style="background-color:#3A75C4;padding:24px 32px;
+                       border-radius:10px 10px 0 0;">
+              <h2 style="color:#FFFFFF;margin:0;font-size:20px;
+                         font-family:Arial,sans-serif;mso-line-height-rule:exactly;">
+                Candidate Job Application
+              </h2>
+              <p style="color:#C7D2FE;margin:6px 0 0;font-size:13px;
+                        font-family:Arial,sans-serif;mso-line-height-rule:exactly;">
+                Received On: ${receivedAt}
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── BODY ── -->
+          <tr>
+            <td class="email-body"
+                style="padding:24px 32px;background-color:#FFFFFF;
+                       font-family:Arial,sans-serif;">
+
+              ${section("Personal Information")}
+              <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="font-size:14px;border-collapse:collapse;margin-bottom:24px;">
+                ${row("Full Name",       data.name,     true)}
+                ${row("Email",           data.email)}
+                ${row("Phone",           data.phone,    true)}
+                ${row("Age",             data.dob)}
+                ${row("Gender",          data.gender,   true)}
+                ${row("Location",        data.location)}
+                ${row("About Candidate", data.describe, true)}
+              </table>
+
+              ${section("Thinking &amp; Observation")}
+              <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="font-size:14px;border-collapse:collapse;margin-bottom:24px;">
+                ${row("1. What are you becoming through the activities you engage in regularly?",
+                      data.q_1, true)}
+                ${row("2. Something most people don't notice about a system/environment you interact with — but you have?",
+                      data.q_2)}
+                ${row("3. What did you observe, why did it stand out, and how did you interpret it?",
+                      data.q_3, true)}
+              </table>
+
+              ${section("Open Position &amp; Final Details")}
+              <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                     style="font-size:14px;border-collapse:collapse;margin-bottom:24px;">
+                ${row("Preferred Role",          data.job_role,                true)}
+                ${row("Years of Experience",     data.experience)}
+                ${row("Expected Salary (₹/mo)",  data.salary,                  true)}
+                ${row("Joining Date",            data.joining_date)}
+                ${row("Preferred Work Location", data.Preferred_work_location, true)}
+                ${row("Why join Uway?",          data.message || "—")}
+              </table>
+
+              ${section("Resume")}
+              ${resumeSection}
+
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="email-footer"
+                style="background-color:#F3F4F6;padding:14px 32px;font-size:12px;
+                       color:#9CA3AF;text-align:center;font-family:Arial,sans-serif;
+                       border-radius:0 0 10px 10px;">
+              Automated email &middot; Uway Careers System
+            </td>
+          </tr>
+
         </table>
-        ${section("Thinking &amp; Observation")}
-        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
-          ${row("1. What are you becoming through the activities you engage in regularly?",                                                                                    data.q_1, true)}
-          ${row("2. Something most people don't notice about a system/environment you interact with — but you have?", data.q_2)}
-          ${row("3. What did you observe, why did it stand out, and how did you interpret it?",                        data.q_3, true)}
-        </table>
-        ${section("Open Position &amp; Final Details")}
-        <table style="width:100%;font-size:14px;border-collapse:collapse;margin-bottom:24px">
-          ${row("Preferred Role",          data.job_role,                   true)}
-          ${row("Years of Experience",     data.experience)}
-          ${row("Expected Salary (₹/mo)",  data.salary,                     true)}
-          ${row("Joining Date",            data.joining_date)}
-          ${row("Preferred Work Location", data.Preferred_work_location,    true)}
-          ${row("Why join Uway?",          data.message || "—")}
-        </table>
-        ${section("Resume")}
-        ${resumeSection}
-      </div>
-      <div style="background:#f3f4f6;padding:14px 32px;font-size:12px;
-                  color:#9ca3af;text-align:center">
-        Automated email · Uway Careers System
-      </div>
-    </div>`;
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
 }
 
+/* ── Candidate confirmation email ── */
 function buildCandidateEmailHTML(data) {
-  return `
-    <div style="font-family:sans-serif;max-width:600px;margin:auto;
-                border:1px solid #e5e7eb;border-radius:10px;overflow:hidden">
-      <div style="background: #3A75C4;padding:24px 32px">
-        <h2 style="color:#fff;margin:0;font-size:20px">Application Received!</h2>
-      </div>
-      <div style="padding:24px 32px;background:#fff">
-        <p style="font-size:15px;color:#111827;margin-top:0">
-          Hi <strong>${data.name}</strong>,
-        </p>
-        <p style="font-size:14px;color:#374151;line-height:1.8">
-          Thank you for applying for the <strong>${data.job_role}</strong> position
-          at <strong>Uway</strong>. We have successfully received your application along
-          with your resume.
-        </p>
-        <p style="font-size:14px;color:#374151;line-height:1.8">
-          Our team will carefully review your profile and get back to you shortly.
-          We appreciate your interest in joining the Uway Team!
-        </p>
-        <p style="font-size:13px;color:#9ca3af;margin-top:24px">
-          Questions? Reach us at
-          <a href="mailto:contact@uway.in" style="color:#4F46E5;text-decoration:none">
-            contact@uway.in
-          </a>
-        </p>
-      </div>
-      <div style="background:#f3f4f6;padding:14px 32px;font-size:12px;
-                  color:#9ca3af;text-align:center">
-        © ${new Date().getFullYear()} Uway Groups. All rights reserved.
-      </div>
-    </div>`;
+  return `<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:v="urn:schemas-microsoft-com:vml"
+      xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta name="color-scheme" content="light"/>
+  <meta name="supported-color-schemes" content="light"/>
+  <!--[if mso]>
+  <noscript><xml>
+    <o:OfficeDocumentSettings>
+      <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+  </xml></noscript>
+  <![endif]-->
+  <style>
+    :root { color-scheme: light only; }
+
+    [data-ogsc] .candidate-body {
+      background-color: #FFFFFF !important;
+      color: #374151 !important;
+    }
+    [data-ogsc] .candidate-footer {
+      background-color: #F3F4F6 !important;
+      color: #9CA3AF !important;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .candidate-body   { background-color: #FFFFFF !important; color: #374151 !important; }
+      .candidate-footer { background-color: #F3F4F6 !important; color: #9CA3AF !important; }
+    }
+  </style>
+</head>
+<body style="margin:0;padding:16px;background-color:#F9FAFB;">
+
+  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+         style="background-color:#F9FAFB;">
+    <tr>
+      <td align="center">
+
+        <table width="600" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:600px;width:100%;border:1px solid #E5E7EB;
+                      border-radius:10px;background-color:#FFFFFF;">
+
+          <!-- ── HEADER ── -->
+          <tr>
+            <td style="background-color:#3A75C4;padding:24px 32px;
+                       border-radius:10px 10px 0 0;">
+              <h2 style="color:#FFFFFF;margin:0;font-size:20px;
+                         font-family:Arial,sans-serif;mso-line-height-rule:exactly;">
+                Application Received!
+              </h2>
+            </td>
+          </tr>
+
+          <!-- ── BODY ── -->
+          <tr>
+            <td class="candidate-body"
+                style="padding:24px 32px;background-color:#FFFFFF;
+                       font-family:Arial,sans-serif;color:#374151;">
+              <p style="font-size:15px;color:#111827;margin-top:0;">
+                Hi <strong>${data.name}</strong>,
+              </p>
+              <p style="font-size:14px;color:#374151;line-height:1.8;">
+                Thank you for applying for the
+                <strong>${data.job_role}</strong> position at <strong>Uway</strong>.
+                We have successfully received your application along with your resume.
+              </p>
+              <p style="font-size:14px;color:#374151;line-height:1.8;">
+                Our team will carefully review your profile and get back to you shortly.
+                We appreciate your interest in joining the Uway Team!
+              </p>
+              <p style="font-size:13px;color:#9CA3AF;margin-top:24px;">
+                Questions? Reach us at
+                <a href="mailto:contact@uway.in"
+                   style="color:#4F46E5;text-decoration:none;">
+                  contact@uway.in
+                </a>
+              </p>
+            </td>
+          </tr>
+
+          <!-- ── FOOTER ── -->
+          <tr>
+            <td class="candidate-footer"
+                style="background-color:#F3F4F6;padding:14px 32px;font-size:12px;
+                       color:#9CA3AF;text-align:center;font-family:Arial,sans-serif;
+                       border-radius:0 0 10px 10px;">
+              &copy; ${new Date().getFullYear()} Uway Groups. All rights reserved.
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+
+</body>
+</html>`;
 }
 
 /* ============================================================
@@ -427,17 +636,17 @@ app.post("/submit", upload.single("resume"), async (req, res) => {
             to      : EMAIL_CONFIG.ADMIN_TO,
             subject : `[ERROR] Candidate submission – ${bodyData.name} | ${bodyData.job_role}`,
             html    : `
-              <div style="font-family:sans-serif;max-width:640px;margin:auto;padding:24px;
-                          border:2px solid #ef4444;border-radius:10px">
-                <h2 style="color:#ef4444">Background Processing Failed</h2>
-                <p>A candidate submitted their application but Drive upload or admin email failed.</p>
-                <p><strong>Error:</strong> ${bgErr.message}</p>
+              <div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;padding:24px;
+                          border:2px solid #ef4444;border-radius:10px;background-color:#FFFFFF;">
+                <h2 style="color:#ef4444;">Background Processing Failed</h2>
+                <p style="color:#374151;">A candidate submitted their application but Drive upload or admin email failed.</p>
+                <p style="color:#374151;"><strong>Error:</strong> ${bgErr.message}</p>
                 <hr/>
-                <p><strong>Name:</strong>  ${bodyData.name}</p>
-                <p><strong>Email:</strong> ${bodyData.email}</p>
-                <p><strong>Phone:</strong> ${bodyData.phone}</p>
-                <p><strong>Role:</strong>  ${bodyData.job_role}</p>
-                <p style="color:#ef4444"><em>Resume NOT saved to Drive. Follow up manually.</em></p>
+                <p style="color:#374151;"><strong>Name:</strong>  ${bodyData.name}</p>
+                <p style="color:#374151;"><strong>Email:</strong> ${bodyData.email}</p>
+                <p style="color:#374151;"><strong>Phone:</strong> ${bodyData.phone}</p>
+                <p style="color:#374151;"><strong>Role:</strong>  ${bodyData.job_role}</p>
+                <p style="color:#ef4444;"><em>Resume NOT saved to Drive. Follow up manually.</em></p>
               </div>`,
           });
           console.log("Fallback error-alert sent to admin.");
