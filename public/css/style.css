@@ -311,9 +311,9 @@ body {
     font-weight: 300;
 }
 
-.previous_btn:hover {
+/* .previous_btn:hover {
     background: #a19696;
-}
+} */
 
 .next_btn {
     padding: 10px 12px;
@@ -326,9 +326,9 @@ body {
     font-weight: 300;
 }
 
-.next_btn:hover {
+/* .next_btn:hover {
     background: #1d4ed8;
-}
+} */
 
 .submit_btn {
     background: #1dd868;
@@ -341,9 +341,9 @@ body {
     font-weight: 300;
 }
 
-.submit_btn:hover {
+/* .submit_btn:hover {
     background: #25d66c;
-}
+} */
 
 /* ============================================================
    FIELDSETS & INPUTS
