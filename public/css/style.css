@@ -624,7 +624,7 @@ body.no-scroll {
     text-align: center;
     font-size: clamp(8px, 2vw, 9px);
     color: #b1a7a794 !important;
-    font-weight: 300 !important;
+    font-weight: 400!important;
     margin-bottom: -26px;
     margin-top: 15px;
 }
