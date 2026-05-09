@@ -2,11 +2,9 @@
 <html lang="en">
 
 <head>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uway - Login</title>
-</head>
+<title>Bliend - Login</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
@@ -131,7 +129,7 @@ body {
 /* ─── HERO ──────────────────────────────────────────────── */
 .hero {
   text-align: center;
-  margin-bottom: 26px;
+  margin-bottom: -4px;
   width: 100%;
 }
 
@@ -145,24 +143,24 @@ body {
 .hero p {
   margin-top: 17px;
   color: #6b7280;
-  font-size: 20px;
-  margin-bottom: 18px;
+  font-size: clamp(10px, 2.5vw, 12px);
+  margin-bottom: 36px;
   padding: 0 8px;
   line-height: 1.6;
 }
 
-/* .hero p:hover {
+.hero p:hover {
   color: #ffffff87;
   font-weight: 400;
   transition: all .25s ease;
-} */
+}
 
 /* ─── CONTAINER ─────────────────────────────────────────── */
 .container {
-  /* background: #333232; */
+  background: #333232;
   padding: 5px;
   border-radius: 30px;
-  /* box-shadow: 0 15px 35px rgba(0,0,0,0.35); */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.35);
   width: 100%;
 }
 
@@ -175,20 +173,16 @@ body {
   color: white;
   position: relative;
   background: linear-gradient(76deg, #252425 0%, #636363 100%);
-  /* box-shadow:
+  box-shadow:
     0 8px 30px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.05); */
+    inset 0 1px 0 rgba(255,255,255,0.05);
 }
 
 .card h2 {
-    font-size: clamp(18px, 5vw, 32px);
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #ffffffd4;
-    background: linear-gradient(210deg,rgba(97, 93, 93, 1) 0%, rgba(224, 218, 218, 1) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+  font-size: clamp(18px, 5vw, 32px);
+  font-weight: 400;
+  margin-bottom: 10px;
+  color: #ffffffd4;
 }
 
 .card > p {
@@ -249,7 +243,7 @@ body {
   height: 34px;
   border-radius: 50%;
   border: none;
-  background: #3A75C4;
+  background: #2563eb;
   cursor: pointer;
   padding: 6px;
   display: flex;
@@ -294,11 +288,11 @@ body {
   position: relative;
 }
 
-/* .avatars img:hover {
+.avatars img:hover {
   transform: scale(1.2) translateY(-4px) !important;
   box-shadow: rgba(100,100,111,0.35) 0px 7px 29px 0px;
   z-index: 10 !important;
-} */
+}
 
 /* Desktop avatar sizes */
 .av1 { width: 40px; height: 40px; border: 3px solid #4c4d4fd6; margin-bottom: 8px; margin-right: -14px; z-index: 1; }
@@ -315,8 +309,8 @@ body {
   right: 0;
   text-align: center;
   font-size: clamp(8px, 2vw, 9px);
-  color: #b1a7a794 !important;
-  font-weight: 300 !important;
+  color: #ffffff94;
+  font-weight: 100;
 }
 
 .footer strong {
@@ -529,15 +523,15 @@ body {
 
   <!-- HERO -->
   <div class="hero">
-    <h1><img src="images/Uway_w_logo_header.svg" alt="Uway_logo" id="logo"></h1>
-    <p></p>
+    <h1><img src="images/Bliend_w_logo_header.svg" alt="Bliend_logo" id="logo"></h1>
+    <p>Experience. Explore. Evolve</p>
   </div>
 
   <!-- LOGIN CARD -->
   <div class="container">
     <div class="card">
 
-      <h2>#uwaycareers</h2>
+      <h2>#Bliendtalents</h2>
       <p>Let your unseen become undeniable.</p>
 
       <div class="input-box">
@@ -574,7 +568,7 @@ body {
 
 <!-- FOOTER -->
 <footer class="footer">
-  ©2026 Uway Groups. All rights reserved
+  © 2026 Powered by <strong>Bliend</strong>. All Rights Reserved
 </footer>
 
 <script>
@@ -588,38 +582,16 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 // ----------------------
 // SUBMIT VALIDATION
 // ----------------------
-// submitBtn.addEventListener("click", function(e){
-//   e.preventDefault();
-//   const email = emailInput.value.trim();
-//   if(email === ""){
-//     errorMsg.textContent = "Email field cannot be empty";
-//     emailInput.style.border = "2px solid #e45153";
-//     emailInput.focus();
-//     return;
-//   }
-//   if(!emailRegex.test(email)){
-//     errorMsg.textContent = "Please enter a valid email address";
-//     emailInput.style.border = "2px solid #e45153";
-//     emailInput.focus();
-//     return;
-//   }
-//   localStorage.setItem("userEmail", email);
-//   errorMsg.style.color = "green";
-//   errorMsg.textContent = "Email stored successfully!";
-//   emailInput.style.border = "2px solid green";
-//   window.location.href = "career.html";
-// });
-
-function handleEmailSubmit(e) {
+submitBtn.addEventListener("click", function(e){
   e.preventDefault();
   const email = emailInput.value.trim();
-  if (email === "") {
+  if(email === ""){
     errorMsg.textContent = "Email field cannot be empty";
     emailInput.style.border = "2px solid #e45153";
     emailInput.focus();
     return;
   }
-  if (!emailRegex.test(email)) {
+  if(!emailRegex.test(email)){
     errorMsg.textContent = "Please enter a valid email address";
     emailInput.style.border = "2px solid #e45153";
     emailInput.focus();
@@ -629,18 +601,7 @@ function handleEmailSubmit(e) {
   errorMsg.style.color = "green";
   errorMsg.textContent = "Email stored successfully!";
   emailInput.style.border = "2px solid green";
-  emailInput.style.backgroundColor = "white";
-  emailInput.style.color = "#333232";
-  emailInput.style.fontWeight = "400";
-  
-  
   window.location.href = "career.html";
-}
-
-submitBtn.addEventListener("click", handleEmailSubmit);
-
-emailInput.addEventListener("keydown", function (e) {
-  if (e.key === "Enter") handleEmailSubmit(e);
 });
 
 // ----------------------
