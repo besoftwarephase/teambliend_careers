@@ -629,6 +629,13 @@ body.no-scroll {
     margin-top: 15px;
 }
 
+#job_role_menu
+{
+   height:200px;
+   overflow:scroll;
+   scrollbar-width:none;
+}
+
 
 
 /* ============================================================
